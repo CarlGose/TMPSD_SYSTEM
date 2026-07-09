@@ -145,16 +145,6 @@ export default function DriverDetail() {
             {driverFullName}
           </h1>
           <div className="flex items-center gap-3 mt-2">
-            <Badge
-              variant="secondary"
-              className={
-                driver.driver_type === 'operator'
-                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                  : 'bg-sky-500/10 text-sky-400 border-sky-500/20'
-              }
-            >
-              {driver.driver_type === 'operator' ? 'Operator' : 'Authorized Driver'}
-            </Badge>
             <span className="text-xs text-muted-foreground">
               Registered {format(new Date(driver.created_at), 'MMM d, yyyy')}
             </span>
@@ -211,48 +201,84 @@ export default function DriverDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <InfoItem icon={CreditCard} label="Plate Number" value={driver.plate_number} />
+              <h4 className="font-semibold text-foreground border-b border-border/20 pb-2 mb-4">Driver Details</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <InfoItem icon={FileText} label="Address" value={driver.address || 'N/A'} />
+                <InfoItem icon={FileText} label="TODA Affiliation" value={driver.toda_affiliation || 'N/A'} />
                 <InfoItem icon={Shield} label="License" value={driver.license} />
-                <InfoItem icon={FileText} label="Body Sticker" value={driver.body_sticker} />
-                <InfoItem
-                  icon={Calendar}
-                  label="Registered"
-                  value={format(new Date(driver.created_at), 'MMMM d, yyyy')}
-                />
+                <InfoItem icon={Calendar} label="Registered" value={format(new Date(driver.created_at), 'MMMM d, yyyy')} />
               </div>
 
-              {/* Tricycle Photo */}
-              {driver.tricycle_photo_url && (
-                <div className="mt-6">
-                  <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                    <ImageIcon className="h-4 w-4" />
-                    Tricycle Photo
-                  </p>
-                  <div className="rounded-xl overflow-hidden border border-border/30 max-h-64">
-                    <img
-                      src={driver.tricycle_photo_url}
-                      alt="Tricycle"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              )}
+              <h4 className="font-semibold text-foreground border-b border-border/20 pb-2 mb-4">Tricycle Details</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <InfoItem icon={FileText} label="Permit No." value={driver.permit_no || 'N/A'} />
+                <InfoItem icon={Calendar} label="Valid Until" value={driver.valid_until || 'N/A'} />
+                <InfoItem icon={FileText} label="OR No." value={driver.or_no || 'N/A'} />
+                <InfoItem icon={FileText} label="Make" value={driver.make || 'N/A'} />
+                <InfoItem icon={FileText} label="Motor No." value={driver.motor_no || 'N/A'} />
+                <InfoItem icon={FileText} label="Chassis No." value={driver.chassis_no || 'N/A'} />
+                <InfoItem icon={FileText} label="Body No." value={driver.body_no || 'N/A'} />
+                <InfoItem icon={CreditCard} label="Plate Number" value={driver.plate_number} />
+                <InfoItem icon={FileText} label="Body Sticker" value={driver.body_sticker} />
+              </div>
 
-              {/* OR/CR Document */}
-              {driver.or_cr_url && (
-                <div className="mt-4">
-                  <a
-                    href={driver.or_cr_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    View OR/CR Document
-                  </a>
+              <div className="mt-8 space-y-6">
+                <h4 className="font-semibold text-foreground border-b border-border/20 pb-2">Documents & Photos</h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {driver.profile_picture_url && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Profile Picture
+                      </p>
+                      <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
+                        <img src={driver.profile_picture_url} alt="Profile" className="w-full h-full object-contain rounded-lg" />
+                      </div>
+                    </div>
+                  )}
+
+                  {driver.license_photo_url && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Driver's License
+                      </p>
+                      <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
+                        <img src={driver.license_photo_url} alt="License" className="w-full h-full object-contain rounded-lg" />
+                      </div>
+                    </div>
+                  )}
+
+                  {driver.tricycle_photo_url && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4" />
+                        Tricycle Photo
+                      </p>
+                      <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
+                        <img src={driver.tricycle_photo_url} alt="Tricycle" className="w-full h-full object-contain rounded-lg" />
+                      </div>
+                    </div>
+                  )}
+
+                  {driver.or_cr_url && (
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                        <ExternalLink className="h-4 w-4" />
+                        OR/CR Document
+                      </p>
+                      <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
+                        {driver.or_cr_url.endsWith('.pdf') ? (
+                          <a href={driver.or_cr_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View PDF Document</a>
+                        ) : (
+                          <img src={driver.or_cr_url} alt="OR/CR" className="w-full h-full object-contain rounded-lg" />
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </CardContent>
           </Card>
 

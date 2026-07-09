@@ -5,70 +5,79 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { toast } from 'sonner'
 import { 
   UserPlus, 
   Loader2, 
-  Upload, 
   Image as ImageIcon, 
   FileText,
   ArrowLeft,
-  CheckCircle2
+  CheckCircle2,
+  Camera
 } from 'lucide-react'
 
 export default function AddDriver() {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  
   const [form, setForm] = useState({
+    // Authorized Driver
     first_name: '',
     last_name: '',
-    middle_name: '',
-    plate_number: '',
+    middle_name: '',      
+    address: '',
     license: '',
+    toda_affiliation: '',
+    // Operator
+    operator_first_name: '',
+    operator_last_name: '',
+    operator_middle_name: '',
+    operator_address: '',
+    // Vehicle
+    permit_no: '',
+    valid_until: '',
+    or_no: '',
+    make: '',
+    motor_no: '',
+    chassis_no: '',
+    plate_number: '',
+    body_no: '',
     body_sticker: '',
-    driver_type: '',
   })
-  const [tricyclePhoto, setTricyclePhoto] = useState(null)
-  const [tricyclePreview, setTricyclePreview] = useState(null)
+
+  // Photos
+  const [profilePic, setProfilePic] = useState(null)
+  const [profilePreview, setProfilePreview] = useState(null)
+  
+  const [licensePhoto, setLicensePhoto] = useState(null)
+  const [licensePreview, setLicensePreview] = useState(null)
+
   const [orCrFile, setOrCrFile] = useState(null)
   const [orCrPreview, setOrCrPreview] = useState(null)
+
+  const [tricyclePhoto, setTricyclePhoto] = useState(null)
+  const [tricyclePreview, setTricyclePreview] = useState(null)
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  const handlePhotoChange = (e) => {
+  const handleFileChange = (e, setFile, setPreview) => {
     const file = e.target.files?.[0]
     if (file) {
-      setTricyclePhoto(file)
-      const reader = new FileReader()
-      reader.onload = (ev) => setTricyclePreview(ev.target.result)
-      reader.readAsDataURL(file)
-    }
-  }
-
-  const handleOrCrChange = (e) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setOrCrFile(file)
+      setFile(file)
       if (file.type.startsWith('image/')) {
         const reader = new FileReader()
-        reader.onload = (ev) => setOrCrPreview(ev.target.result)
+        reader.onload = (ev) => setPreview(ev.target.result)
         reader.readAsDataURL(file)
       } else {
-        setOrCrPreview(null)
+        setPreview(null)
       }
     }
   }
 
   const uploadFile = async (file, bucket, folder) => {
+    if (!file) return null
     const ext = file.name.split('.').pop()
     const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
     
@@ -87,53 +96,104 @@ export default function AddDriver() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
-    if (!form.driver_type) {
-      toast.error('Please select a driver type')
-      return
-    }
-    if (!tricyclePhoto) {
-      toast.error('Please upload a tricycle photo')
-      return
-    }
-    if (!orCrFile) {
-      toast.error('Please upload the OR/CR document')
-      return
-    }
-
     setLoading(true)
 
     try {
       // Upload files
-      const photoUrl = await uploadFile(tricyclePhoto, 'tricycle-photos', 'photos')
+      const profilePicUrl = await uploadFile(profilePic, 'tricycle-photos', 'profiles')
+      const licensePhotoUrl = await uploadFile(licensePhoto, 'documents', 'licenses')
       const orCrUrl = await uploadFile(orCrFile, 'documents', 'or-cr')
+      const tricyclePhotoUrl = await uploadFile(tricyclePhoto, 'tricycle-photos', 'photos')
 
       // Insert driver
       const { data, error } = await supabase
         .from('drivers')
         .insert({
-          ...form,
+          driver_type: 'operator',
+          first_name: form.first_name,
+          last_name: form.last_name,
           middle_name: form.middle_name || null,
-          tricycle_photo_url: photoUrl,
+          address: form.address || null,
+          license: form.license || 'N/A',
+          toda_affiliation: form.toda_affiliation || null,
+          operator_first_name: form.operator_first_name || null,
+          operator_last_name: form.operator_last_name || null,
+          operator_middle_name: form.operator_middle_name || null,
+          operator_address: form.operator_address || null,
+          plate_number: form.plate_number || 'N/A',
+          body_sticker: form.body_no || 'N/A', // Using body_no for body_sticker if needed
+          body_no: form.body_no || null,
+          permit_no: form.permit_no || null,
+          valid_until: form.valid_until || null,
+          or_no: form.or_no || null,
+          make: form.make || null,
+          motor_no: form.motor_no || null,
+          chassis_no: form.chassis_no || null,
+          profile_picture_url: profilePicUrl,
+          license_photo_url: licensePhotoUrl,
           or_cr_url: orCrUrl,
+          tricycle_photo_url: tricyclePhotoUrl,
         })
         .select()
         .single()
 
       if (error) throw error
 
-      toast.success('Driver registered successfully!')
+      toast.success('Registered successfully!')
       navigate(`/dashboard/drivers/${data.id}`)
     } catch (error) {
-      console.error('Error adding driver:', error)
-      toast.error(error.message || 'Failed to register driver')
+      console.error('Error adding:', error)
+      toast.error(error.message || 'Failed to register')
     } finally {
       setLoading(false)
     }
   }
 
+  const FileUploadBox = ({ id, label, accept, preview, file, onChange, icon: Icon, desc }) => (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      <div className="relative">
+        <input
+          type="file"
+          accept={accept}
+          onChange={onChange}
+          className="hidden"
+          id={id}
+        />
+        <label
+          htmlFor={id}
+          className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border/50 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 overflow-hidden"
+        >
+          {preview ? (
+            <div className="relative w-full h-full bg-muted/10">
+              <img
+                src={preview}
+                alt="Preview"
+                className="w-full h-full object-contain"
+              />
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                <p className="text-white text-sm font-medium">Click to change</p>
+              </div>
+            </div>
+          ) : file ? (
+            <div className="flex flex-col items-center">
+              <CheckCircle2 className="h-8 w-8 text-emerald-400 mb-2" />
+              <p className="text-sm text-foreground font-medium">{file.name}</p>
+              <p className="text-xs text-muted-foreground mt-1">Click to change</p>
+            </div>
+          ) : (
+            <>
+              <Icon className="h-8 w-8 text-muted-foreground/40 mb-2" />
+              <p className="text-sm text-muted-foreground text-center px-4">{desc}</p>
+            </>
+          )}
+        </label>
+      </div>
+    </div>
+  )
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 pb-12">
       {/* Header */}
       <div className="slide-up">
         <Button
@@ -144,9 +204,9 @@ export default function AddDriver() {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Register New Driver</h1>
+        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Register Driver & Operator</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Fill in all required details to register a new tricycle driver
+          Fill in the details below to register the Operator and Authorized Driver
         </p>
       </div>
 
@@ -154,181 +214,244 @@ export default function AddDriver() {
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-primary" />
-            Driver Information
+            Registration Information
           </CardTitle>
           <CardDescription>All fields marked with * are required</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="first_name">First Name *</Label>
-                <Input
-                  id="first_name"
-                  placeholder="Juan"
-                  value={form.first_name}
-                  onChange={(e) => handleChange('first_name', e.target.value)}
-                  required
-                  className="bg-input/50 border-border/50"
-                />
+            
+            {/* Operator Details */}
+            <div className="p-4 rounded-xl border border-border/30 bg-muted/5 space-y-6">
+              <h3 className="font-semibold text-foreground border-b border-border/20 pb-2">
+                Operator Details
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Operator First Name *</Label>
+                  <Input
+                    required
+                    value={form.operator_first_name}
+                    onChange={(e) => handleChange('operator_first_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Operator Last Name *</Label>
+                  <Input
+                    required
+                    value={form.operator_last_name}
+                    onChange={(e) => handleChange('operator_last_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Operator Middle Name</Label>
+                  <Input
+                    value={form.operator_middle_name}
+                    onChange={(e) => handleChange('operator_middle_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="last_name">Last Name *</Label>
+                <Label>Operator Address</Label>
                 <Input
-                  id="last_name"
-                  placeholder="Dela Cruz"
-                  value={form.last_name}
-                  onChange={(e) => handleChange('last_name', e.target.value)}
-                  required
+                  value={form.operator_address}
+                  onChange={(e) => handleChange('operator_address', e.target.value)}
                   className="bg-input/50 border-border/50"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="middle_name">Middle Name (Optional)</Label>
-              <Input
-                id="middle_name"
-                placeholder="Santos"
-                value={form.middle_name}
-                onChange={(e) => handleChange('middle_name', e.target.value)}
-                className="bg-input/50 border-border/50"
-              />
+            {/* Authorized Driver Details */}
+            <div className="p-4 rounded-xl border border-border/30 bg-muted/5 space-y-6">
+              <h3 className="font-semibold text-foreground border-b border-border/20 pb-2">
+                Authorized Driver Details
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Driver First Name *</Label>
+                  <Input
+                    required
+                    value={form.first_name}
+                    onChange={(e) => handleChange('first_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Driver Last Name *</Label>
+                  <Input
+                    required
+                    value={form.last_name}
+                    onChange={(e) => handleChange('last_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Driver Middle Name</Label>
+                  <Input
+                    value={form.middle_name}
+                    onChange={(e) => handleChange('middle_name', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Driver Address</Label>
+                <Input
+                  value={form.address}
+                  onChange={(e) => handleChange('address', e.target.value)}
+                  className="bg-input/50 border-border/50"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Driver's License No. *</Label>
+                  <Input
+                    required
+                    value={form.license}
+                    onChange={(e) => handleChange('license', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>TODA Affiliation</Label>
+                  <Input
+                    value={form.toda_affiliation}
+                    onChange={(e) => handleChange('toda_affiliation', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Vehicle Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="plate_number">Plate Number *</Label>
-                <Input
-                  id="plate_number"
-                  placeholder="ABC-1234"
-                  value={form.plate_number}
-                  onChange={(e) => handleChange('plate_number', e.target.value)}
-                  required
-                  className="bg-input/50 border-border/50"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="license">License Number *</Label>
-                <Input
-                  id="license"
-                  placeholder="N01-23-456789"
-                  value={form.license}
-                  onChange={(e) => handleChange('license', e.target.value)}
-                  required
-                  className="bg-input/50 border-border/50"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="body_sticker">Body Sticker *</Label>
-                <Input
-                  id="body_sticker"
-                  placeholder="BS-001"
-                  value={form.body_sticker}
-                  onChange={(e) => handleChange('body_sticker', e.target.value)}
-                  required
-                  className="bg-input/50 border-border/50"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="driver_type">Driver Type *</Label>
-                <Select value={form.driver_type} onValueChange={(v) => handleChange('driver_type', v)}>
-                  <SelectTrigger id="driver_type" className="bg-input/50 border-border/50">
-                    <SelectValue placeholder="Select type..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="operator">Operator</SelectItem>
-                    <SelectItem value="authorized_driver">Authorized Driver</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Tricycle Details */}
+            <div className="p-4 rounded-xl border border-border/30 bg-muted/5 space-y-6">
+              <h3 className="font-semibold text-foreground border-b border-border/20 pb-2">
+                Tricycle Details
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Permit No.</Label>
+                  <Input
+                    value={form.permit_no}
+                    onChange={(e) => handleChange('permit_no', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Date Valid Until</Label>
+                  <Input
+                    type="date"
+                    value={form.valid_until}
+                    onChange={(e) => handleChange('valid_until', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>OR No.</Label>
+                  <Input
+                    value={form.or_no}
+                    onChange={(e) => handleChange('or_no', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Make (Brand of Motor)</Label>
+                  <Input
+                    value={form.make}
+                    onChange={(e) => handleChange('make', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Motor No.</Label>
+                  <Input
+                    value={form.motor_no}
+                    onChange={(e) => handleChange('motor_no', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Chassis No.</Label>
+                  <Input
+                    value={form.chassis_no}
+                    onChange={(e) => handleChange('chassis_no', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Plate No. *</Label>
+                  <Input
+                    required
+                    value={form.plate_number}
+                    onChange={(e) => handleChange('plate_number', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Body No. *</Label>
+                  <Input
+                    required
+                    value={form.body_no}
+                    onChange={(e) => handleChange('body_no', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
               </div>
             </div>
 
             {/* File Uploads */}
-            <div className="space-y-4">
-              {/* Tricycle Photo */}
-              <div className="space-y-2">
-                <Label>Tricycle Photo *</Label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                    id="tricycle-photo"
-                  />
-                  <label
-                    htmlFor="tricycle-photo"
-                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border/50 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 overflow-hidden"
-                  >
-                    {tricyclePreview ? (
-                      <div className="relative w-full h-full">
-                        <img
-                          src={tricyclePreview}
-                          alt="Tricycle preview"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                          <p className="text-white text-sm font-medium">Click to change</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <ImageIcon className="h-8 w-8 text-muted-foreground/40 mb-2" />
-                        <p className="text-sm text-muted-foreground">Click to upload tricycle photo</p>
-                        <p className="text-xs text-muted-foreground/60 mt-1">JPG, PNG up to 5MB</p>
-                      </>
-                    )}
-                  </label>
-                </div>
-              </div>
-
-              {/* OR/CR Document */}
-              <div className="space-y-2">
-                <Label>OR/CR Document *</Label>
-                <div className="relative">
-                  <input
-                    type="file"
-                    accept="image/*,.pdf"
-                    onChange={handleOrCrChange}
-                    className="hidden"
-                    id="or-cr-file"
-                  />
-                  <label
-                    htmlFor="or-cr-file"
-                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-border/50 rounded-xl cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 overflow-hidden"
-                  >
-                    {orCrPreview ? (
-                      <div className="relative w-full h-full">
-                        <img
-                          src={orCrPreview}
-                          alt="OR/CR preview"
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                          <p className="text-white text-sm font-medium">Click to change</p>
-                        </div>
-                      </div>
-                    ) : orCrFile ? (
-                      <div className="flex flex-col items-center">
-                        <CheckCircle2 className="h-8 w-8 text-emerald-400 mb-2" />
-                        <p className="text-sm text-foreground font-medium">{orCrFile.name}</p>
-                        <p className="text-xs text-muted-foreground mt-1">Click to change</p>
-                      </div>
-                    ) : (
-                      <>
-                        <FileText className="h-8 w-8 text-muted-foreground/40 mb-2" />
-                        <p className="text-sm text-muted-foreground">Click to upload OR/CR</p>
-                        <p className="text-xs text-muted-foreground/60 mt-1">Image or PDF up to 5MB</p>
-                      </>
-                    )}
-                  </label>
-                </div>
+            <div>
+              <h3 className="font-semibold text-foreground mb-4">Upload Documents</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <FileUploadBox
+                  id="profile-pic"
+                  label="2x2 Profile Picture"
+                  accept="image/*"
+                  file={profilePic}
+                  preview={profilePreview}
+                  onChange={(e) => handleFileChange(e, setProfilePic, setProfilePreview)}
+                  icon={Camera}
+                  desc="Click to upload profile photo"
+                />
+                <FileUploadBox
+                  id="license-pic"
+                  label="Driver's License of Authorized Driver"
+                  accept="image/*"
+                  file={licensePhoto}
+                  preview={licensePreview}
+                  onChange={(e) => handleFileChange(e, setLicensePhoto, setLicensePreview)}
+                  icon={FileText}
+                  desc="Click to upload License photo"
+                />
+                <FileUploadBox
+                  id="or-cr"
+                  label="OR/CR of Tricycle"
+                  accept="image/*,.pdf"
+                  file={orCrFile}
+                  preview={orCrPreview}
+                  onChange={(e) => handleFileChange(e, setOrCrFile, setOrCrPreview)}
+                  icon={FileText}
+                  desc="Click to upload OR/CR"
+                />
+                <FileUploadBox
+                  id="tricycle-photo"
+                  label="Tricycle Photo (with PERMIT NO. front)"
+                  accept="image/*"
+                  file={tricyclePhoto}
+                  preview={tricyclePreview}
+                  onChange={(e) => handleFileChange(e, setTricyclePhoto, setTricyclePreview)}
+                  icon={ImageIcon}
+                  desc="Click to upload tricycle photo"
+                />
               </div>
             </div>
 
@@ -341,12 +464,12 @@ export default function AddDriver() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 spinner" />
-                  Registering Driver...
+                  Registering...
                 </>
               ) : (
                 <>
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Register Driver
+                  Submit Registration
                 </>
               )}
             </Button>

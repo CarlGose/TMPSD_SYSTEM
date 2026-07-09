@@ -20,7 +20,6 @@ export default function DriverList() {
   const [drivers, setDrivers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
-  const [filterType, setFilterType] = useState('all')
 
   useEffect(() => {
     fetchDrivers()
@@ -65,9 +64,7 @@ export default function DriverList() {
       `${driver.first_name} ${driver.last_name} ${driver.plate_number}`
         .toLowerCase()
         .includes(search.toLowerCase())
-    const matchesFilter =
-      filterType === 'all' || driver.driver_type === filterType
-    return matchesSearch && matchesFilter
+    return matchesSearch
   })
 
   if (loading) {
@@ -116,17 +113,6 @@ export default function DriverList() {
             className="pl-10 bg-input/50 border-border/50"
           />
         </div>
-        <Select value={filterType} onValueChange={setFilterType}>
-          <SelectTrigger className="w-48 bg-input/50 border-border/50">
-            <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
-            <SelectValue placeholder="Filter by type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="operator">Operators</SelectItem>
-            <SelectItem value="authorized_driver">Authorized Drivers</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Driver Grid */}
@@ -135,14 +121,14 @@ export default function DriverList() {
           <CardContent className="py-16 text-center">
             <Users className="h-16 w-16 text-muted-foreground/20 mx-auto mb-4" />
             <p className="text-muted-foreground font-medium">
-              {search || filterType !== 'all' ? 'No drivers match your search' : 'No drivers registered yet'}
+              {search ? 'No drivers match your search' : 'No drivers registered yet'}
             </p>
             <p className="text-muted-foreground/60 text-sm mt-1">
-              {search || filterType !== 'all'
-                ? 'Try adjusting your search or filter'
+              {search
+                ? 'Try adjusting your search'
                 : 'Add your first driver to get started'}
             </p>
-            {!search && filterType === 'all' && (
+            {!search && (
               <Link to="/dashboard/drivers/new" className="inline-block mt-4">
                 <Button className="gap-2">
                   <UserPlus className="h-4 w-4" />
@@ -153,12 +139,12 @@ export default function DriverList() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+        <div className="flex flex-col gap-3 stagger-children">
           {filteredDrivers.map((driver) => (
             <Link key={driver.id} to={`/dashboard/drivers/${driver.id}`}>
-              <Card className="glass-card border-border/30 hover:border-primary/30 transition-all duration-300 glow-hover cursor-pointer group h-full">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-4">
+              <Card className="glass-card border-border/30 hover:border-primary/30 transition-all duration-300 glow-hover cursor-pointer group">
+                <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4 flex-1 min-w-0 w-full">
                     {/* Avatar / Photo */}
                     <div className="w-14 h-14 rounded-xl overflow-hidden bg-primary/10 shrink-0">
                       {driver.tricycle_photo_url ? (
@@ -175,36 +161,26 @@ export default function DriverList() {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
-                        {driver.first_name} {driver.middle_name ? `${driver.middle_name[0]}. ` : ''}{driver.last_name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
+                          {driver.first_name} {driver.middle_name ? `${driver.middle_name[0]}. ` : ''}{driver.last_name}
+                        </h3>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
                         Plate: {driver.plate_number}
                       </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Badge
-                          variant="secondary"
-                          className={
-                            driver.driver_type === 'operator'
-                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]'
-                              : 'bg-sky-500/10 text-sky-400 border-sky-500/20 text-[10px]'
-                          }
-                        >
-                          {driver.driver_type === 'operator' ? 'Operator' : 'Authorized'}
-                        </Badge>
-                      </div>
                     </div>
                   </div>
 
                   {/* Rating */}
-                  <div className="mt-4 pt-4 border-t border-border/20 flex items-center justify-between">
+                  <div className="w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-border/20 flex sm:flex-col items-center sm:items-end justify-between sm:justify-center">
                     <div className="flex items-center gap-2">
                       <StarRating rating={Math.round(driver.avgRating)} size="sm" />
-                      <span className="text-xs text-muted-foreground">
+                      <span className="text-sm font-medium">
                         {driver.avgRating > 0 ? driver.avgRating.toFixed(1) : 'N/A'}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-xs text-muted-foreground sm:mt-1">
                       {driver.totalRatings} rating{driver.totalRatings !== 1 ? 's' : ''}
                     </span>
                   </div>
