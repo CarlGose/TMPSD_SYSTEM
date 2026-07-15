@@ -9,11 +9,15 @@ import {
   Menu, 
   X,
   Star,
-  ChevronRight
+  ChevronRight,
+  ChevronLeft,
+  Sun,
+  Moon
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
+import { useTheme } from '@/contexts/ThemeContext'
 
 const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -26,6 +30,8 @@ export default function DashboardLayout({ children }) {
   const navigate = useNavigate()
   const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+  const { theme, setTheme } = useTheme()
 
   const handleSignOut = async () => {
     await signOut()
@@ -44,18 +50,21 @@ export default function DashboardLayout({ children }) {
 
       {/* Sidebar */}
       <aside className={cn(
-        'fixed lg:sticky top-0 left-0 z-50 h-screen w-72 glass-card border-r border-border/30 flex flex-col transition-transform duration-300 ease-in-out lg:translate-x-0',
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        'fixed lg:sticky top-0 left-0 z-50 h-screen glass-card border-r border-border/30 flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0',
+        sidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0',
+        isCollapsed ? 'lg:w-20' : 'lg:w-72'
       )}>
         {/* Logo */}
-        <div className="p-6 flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-primary/20 text-primary">
+        <div className={cn("p-6 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
+          <div className="p-2 rounded-xl bg-primary/20 text-primary shrink-0">
             <Star className="h-6 w-6 fill-primary" />
           </div>
-          <div>
-            <h1 className="font-bold text-lg gradient-text">TricycleRate</h1>
-            <p className="text-[10px] text-muted-foreground tracking-wider uppercase">Admin Panel</p>
-          </div>
+          {!isCollapsed && (
+            <div className="animate-in fade-in zoom-in duration-300">
+              <h1 className="font-bold text-lg gradient-text whitespace-nowrap">TricycleRate</h1>
+              <p className="text-[10px] text-muted-foreground tracking-wider uppercase whitespace-nowrap">Admin Panel</p>
+            </div>
+          )}
           <Button 
             variant="ghost" 
             size="icon" 
@@ -77,19 +86,21 @@ export default function DashboardLayout({ children }) {
                 key={item.path}
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
+                title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group',
+                  'flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 group',
+                  isCollapsed ? 'justify-center px-2' : 'px-4',
                   isActive
                     ? 'bg-primary/15 text-primary border border-primary/20'
                     : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
                 )}
               >
                 <item.icon className={cn(
-                  'h-5 w-5 transition-colors',
+                  'h-5 w-5 shrink-0 transition-colors',
                   isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
                 )} />
-                <span>{item.label}</span>
-                {isActive && <ChevronRight className="h-4 w-4 ml-auto text-primary/60" />}
+                {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">{item.label}</span>}
+                {isActive && !isCollapsed && <ChevronRight className="h-4 w-4 ml-auto text-primary/60 shrink-0" />}
               </Link>
             )
           })}
@@ -97,24 +108,48 @@ export default function DashboardLayout({ children }) {
 
         <Separator className="bg-border/30" />
 
-        {/* User section */}
-        <div className="p-4">
-          <div className="flex items-center gap-3 px-3 py-2 mb-3">
-            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+        {/* User section & Collapse Toggle */}
+        <div className="p-4 flex flex-col gap-2">
+          <div className={cn("flex items-center gap-3 py-2 transition-all", isCollapsed ? "justify-center px-0" : "px-3")}>
+            <div className="w-8 h-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
               {user?.email?.[0]?.toUpperCase() || 'A'}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">{user?.email || 'Admin'}</p>
-              <p className="text-[10px] text-muted-foreground">Administrator</p>
-            </div>
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0 animate-in fade-in duration-300">
+                <p className="text-xs font-medium text-foreground truncate">{user?.email || 'Admin'}</p>
+                <p className="text-[10px] text-muted-foreground">Administrator</p>
+              </div>
+            )}
           </div>
           <Button 
             variant="ghost" 
-            className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            title={isCollapsed ? "Sign Out" : undefined}
+            className={cn("w-full gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10", isCollapsed ? "justify-center px-2" : "justify-start")}
             onClick={handleSignOut}
           >
-            <LogOut className="h-4 w-4" />
-            Sign Out
+            <LogOut className="h-4 w-4 shrink-0" />
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Sign Out</span>}
+          </Button>
+
+          <Button
+            variant="ghost"
+            title={isCollapsed ? "Toggle Theme" : undefined}
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className={cn("w-full gap-3 text-muted-foreground hover:text-foreground", isCollapsed ? "justify-center px-2" : "justify-start")}
+          >
+            {theme === 'dark' ? <Sun className="h-4 w-4 shrink-0" /> : <Moon className="h-4 w-4 shrink-0" />}
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Toggle Theme</span>}
+          </Button>
+
+          {/* Desktop Only Collapse Toggle */}
+          <Button
+            variant="ghost"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex w-full mt-2 gap-3 text-muted-foreground hover:text-foreground"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronLeft className="h-4 w-4 shrink-0" />}
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Collapse</span>}
           </Button>
         </div>
       </aside>
@@ -136,7 +171,7 @@ export default function DashboardLayout({ children }) {
           </div>
         </header>
 
-        <div className="p-4 md:p-8 max-w-7xl mx-auto">
+        <div className="p-4 md:p-8 w-full max-w-[1600px] mx-auto transition-all duration-300">
           {children}
         </div>
       </main>

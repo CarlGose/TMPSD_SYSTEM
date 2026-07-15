@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -18,9 +18,11 @@ import {
 import { TODA_LIST } from '@/lib/constants'
 import TodaCombobox from '@/components/TodaCombobox'
 
-export default function AddDriver() {
+export default function EditDriver() {
   const navigate = useNavigate()
+  const { id } = useParams()
   const [loading, setLoading] = useState(false)
+  const [initialLoading, setInitialLoading] = useState(true)
   
   const [form, setForm] = useState({
     // Authorized Driver
@@ -59,6 +61,48 @@ export default function AddDriver() {
 
   const [tricyclePhoto, setTricyclePhoto] = useState(null)
   const [tricyclePreview, setTricyclePreview] = useState(null)
+
+  useEffect(() => {
+    const fetchDriver = async () => {
+      try {
+        const { data, error } = await supabase.from('drivers').select('*').eq('id', id).single()
+        if (error) throw error
+        if (data) {
+          setForm({
+            first_name: data.first_name || '',
+            last_name: data.last_name || '',
+            middle_name: data.middle_name || '',      
+            address: data.address || '',
+            license: data.license || '',
+            toda_affiliation: data.toda_affiliation || '',
+            operator_first_name: data.operator_first_name || '',
+            operator_last_name: data.operator_last_name || '',
+            operator_middle_name: data.operator_middle_name || '',
+            operator_address: data.operator_address || '',
+            permit_no: data.permit_no || '',
+            valid_until: data.valid_until || '',
+            or_no: data.or_no || '',
+            make: data.make || '',
+            motor_no: data.motor_no || '',
+            chassis_no: data.chassis_no || '',
+            plate_number: data.plate_number || '',
+            body_no: data.body_no || '',
+            body_sticker: data.body_sticker || '',
+          })
+          if (data.profile_picture_url) setProfilePreview(data.profile_picture_url)
+          if (data.license_photo_url) setLicensePreview(data.license_photo_url)
+          if (data.or_cr_url) setOrCrPreview(data.or_cr_url)
+          if (data.tricycle_photo_url) setTricyclePreview(data.tricycle_photo_url)
+        }
+      } catch (err) {
+        toast.error('Failed to load driver details')
+        navigate('/dashboard/drivers')
+      } finally {
+        setInitialLoading(false)
+      }
+    }
+    fetchDriver()
+  }, [id, navigate])
 
   const handleChange = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -101,17 +145,13 @@ export default function AddDriver() {
     setLoading(true)
 
     try {
-      // Upload files
-      const profilePicUrl = await uploadFile(profilePic, 'tricycle-photos', 'profiles')
-      const licensePhotoUrl = await uploadFile(licensePhoto, 'documents', 'licenses')
-      const orCrUrl = await uploadFile(orCrFile, 'documents', 'or-cr')
-      const tricyclePhotoUrl = await uploadFile(tricyclePhoto, 'tricycle-photos', 'photos')
+      // Upload files if they exist
+      const profilePicUrl = profilePic ? await uploadFile(profilePic, 'tricycle-photos', 'profiles') : undefined
+      const licensePhotoUrl = licensePhoto ? await uploadFile(licensePhoto, 'documents', 'licenses') : undefined
+      const orCrUrl = orCrFile ? await uploadFile(orCrFile, 'documents', 'or-cr') : undefined
+      const tricyclePhotoUrl = tricyclePhoto ? await uploadFile(tricyclePhoto, 'tricycle-photos', 'photos') : undefined
 
-      // Insert driver
-      const { data, error } = await supabase
-        .from('drivers')
-        .insert({
-          driver_type: 'operator',
+      const updateData = {
           first_name: form.first_name,
           last_name: form.last_name,
           middle_name: form.middle_name || null,
@@ -123,7 +163,7 @@ export default function AddDriver() {
           operator_middle_name: form.operator_middle_name || null,
           operator_address: form.operator_address || null,
           plate_number: form.plate_number || 'N/A',
-          body_sticker: form.body_no || 'N/A', // Using body_no for body_sticker if needed
+          body_sticker: form.body_no || 'N/A',
           body_no: form.body_no || null,
           permit_no: form.permit_no || null,
           valid_until: form.valid_until || null,
@@ -131,21 +171,28 @@ export default function AddDriver() {
           make: form.make || null,
           motor_no: form.motor_no || null,
           chassis_no: form.chassis_no || null,
-          profile_picture_url: profilePicUrl,
-          license_photo_url: licensePhotoUrl,
-          or_cr_url: orCrUrl,
-          tricycle_photo_url: tricyclePhotoUrl,
-        })
+      }
+      
+      if (profilePicUrl) updateData.profile_picture_url = profilePicUrl
+      if (licensePhotoUrl) updateData.license_photo_url = licensePhotoUrl
+      if (orCrUrl) updateData.or_cr_url = orCrUrl
+      if (tricyclePhotoUrl) updateData.tricycle_photo_url = tricyclePhotoUrl
+
+      // Update driver
+      const { data, error } = await supabase
+        .from('drivers')
+        .update(updateData)
+        .eq('id', id)
         .select()
         .single()
 
       if (error) throw error
 
-      toast.success('Registered successfully!')
+      toast.success('Updated successfully!')
       navigate(`/dashboard/drivers/${data.id}`)
     } catch (error) {
-      console.error('Error adding:', error)
-      toast.error(error.message || 'Failed to register')
+      console.error('Error updating:', error)
+      toast.error(error.message || 'Failed to update')
     } finally {
       setLoading(false)
     }
@@ -194,6 +241,14 @@ export default function AddDriver() {
     </div>
   )
 
+  if (initialLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-12">
       {/* Header */}
@@ -206,9 +261,9 @@ export default function AddDriver() {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Register Driver & Operator</h1>
+        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Edit Driver & Operator</h1>
         <p className="text-muted-foreground text-sm mt-1">
-          Fill in the details below to register the Operator and Authorized Driver
+          Update the details below for the Operator and Authorized Driver
         </p>
       </div>
 
@@ -465,12 +520,12 @@ export default function AddDriver() {
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 spinner" />
-                  Registering...
+                  Updating...
                 </>
               ) : (
                 <>
                   <UserPlus className="h-4 w-4 mr-2" />
-                  Submit Registration
+                  Save Changes
                 </>
               )}
             </Button>

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from '@/contexts/AuthContext'
+import { ThemeProvider } from '@/contexts/ThemeContext'
 import { Toaster } from '@/components/ui/sonner'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import DashboardLayout from '@/layouts/DashboardLayout'
@@ -8,6 +9,7 @@ import DashboardHome from '@/pages/DashboardHome'
 import DriverList from '@/pages/DriverList'
 import AddDriver from '@/pages/AddDriver'
 import DriverDetail from '@/pages/DriverDetail'
+import EditDriver from '@/pages/EditDriver'
 import RateDriver from '@/pages/RateDriver'
 
 function AppRoutes() {
@@ -72,6 +74,17 @@ function AppRoutes() {
         }
       />
 
+      <Route
+        path="/dashboard/drivers/:id/edit"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <EditDriver />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
       {/* Catch-all */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
@@ -81,15 +94,17 @@ function AppRoutes() {
 export default function App() {
   return (
     <Router>
-      <AuthProvider>
-        <AppRoutes />
-        <Toaster
-          position="top-right"
-          richColors
-          closeButton
-          theme="dark"
-        />
-      </AuthProvider>
+      <ThemeProvider defaultTheme="light" storageKey="tricycle-theme">
+        <AuthProvider>
+          <AppRoutes />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            theme="dark"
+          />
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   )
 }

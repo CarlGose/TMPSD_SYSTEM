@@ -32,6 +32,7 @@ import {
   QrCode,
   ExternalLink,
   Image as ImageIcon,
+  User
 } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -43,6 +44,9 @@ export default function DriverDetail() {
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [renewDialogOpen, setRenewDialogOpen] = useState(false)
+  const [updatingPermit, setUpdatingPermit] = useState(false)
+  const [newValidUntil, setNewValidUntil] = useState('')
 
   useEffect(() => {
     fetchDriver()
@@ -96,6 +100,30 @@ export default function DriverDetail() {
     }
   }
 
+  const handleUpdatePermit = async () => {
+    if (!newValidUntil) {
+      toast.error('Please select a new valid until date')
+      return
+    }
+    setUpdatingPermit(true)
+    try {
+      const { error } = await supabase
+        .from('drivers')
+        .update({ valid_until: newValidUntil })
+        .eq('id', id)
+
+      if (error) throw error
+      toast.success('Permit renewed successfully')
+      setDriver({ ...driver, valid_until: newValidUntil })
+      setRenewDialogOpen(false)
+    } catch (error) {
+      console.error('Error updating permit:', error)
+      toast.error('Failed to update permit')
+    } finally {
+      setUpdatingPermit(false)
+    }
+  }
+
   const avgRating = ratings.length > 0
     ? ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length
     : 0
@@ -111,6 +139,14 @@ export default function DriverDetail() {
   const driverFullName = driver
     ? `${driver.first_name} ${driver.middle_name ? driver.middle_name + ' ' : ''}${driver.last_name}`
     : ''
+
+  let needsRenewal = false
+  if (driver?.valid_until) {
+    const validUntilDate = new Date(driver.valid_until)
+    const thirtyDaysFromNow = new Date()
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+    needsRenewal = validUntilDate <= thirtyDaysFromNow
+  }
 
   const ratingPageUrl = `${window.location.origin}/rate/${id}`
 
@@ -148,45 +184,57 @@ export default function DriverDetail() {
             <span className="text-xs text-muted-foreground">
               Registered {format(new Date(driver.created_at), 'MMM d, yyyy')}
             </span>
+            {needsRenewal && (
+              <Badge variant="destructive" className="animate-pulse">
+                Permit Expired / Expiring Soon
+              </Badge>
+            )}
           </div>
         </div>
 
-        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10">
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Delete Driver</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to delete {driverFullName}? This action cannot be undone.
-                All ratings and reviews for this driver will also be deleted.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
-                Cancel
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="gap-2 text-primary border-primary/30 hover:bg-primary/10" onClick={() => navigate(`/dashboard/drivers/${id}/edit`)}>
+            <FileText className="h-4 w-4" />
+            Edit Driver
+          </Button>
+
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10">
+                <Trash2 className="h-4 w-4" />
+                Delete
               </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={deleting}
-              >
-                {deleting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 spinner" />
-                    Deleting...
-                  </>
-                ) : (
-                  'Delete Driver'
-                )}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Delete Driver</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete {driverFullName}? This action cannot be undone.
+                  All ratings and reviews for this driver will also be deleted.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                >
+                  {deleting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 spinner" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete Driver'
+                  )}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -207,6 +255,12 @@ export default function DriverDetail() {
                 <InfoItem icon={FileText} label="TODA Affiliation" value={driver.toda_affiliation || 'N/A'} />
                 <InfoItem icon={Shield} label="License" value={driver.license} />
                 <InfoItem icon={Calendar} label="Registered" value={format(new Date(driver.created_at), 'MMMM d, yyyy')} />
+              </div>
+
+              <h4 className="font-semibold text-foreground border-b border-border/20 pb-2 mb-4">Operator Details</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <InfoItem icon={User} label="Operator Name" value={[driver.operator_first_name, driver.operator_middle_name, driver.operator_last_name].filter(Boolean).join(' ') || 'N/A'} />
+                <InfoItem icon={FileText} label="Operator Address" value={driver.operator_address || 'N/A'} />
               </div>
 
               <h4 className="font-semibold text-foreground border-b border-border/20 pb-2 mb-4">Tricycle Details</h4>

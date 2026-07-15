@@ -35,12 +35,30 @@ export default function DashboardHome() {
 
   const fetchData = async () => {
     try {
-      // Fetch driver stats from the view
-      const { data: driversStats, error } = await supabase
-        .from('driver_stats')
-        .select('*')
+      // Fetch drivers and their ratings directly to avoid view dependency issues
+      const { data: rawDrivers, error } = await supabase
+        .from('drivers')
+        .select(`
+          *,
+          ratings ( rating )
+        `)
 
       if (error) throw error
+
+      // Calculate stats locally
+      const driversStats = rawDrivers?.map(d => {
+        const total_ratings = d.ratings ? d.ratings.length : 0;
+        let average_rating = 0;
+        if (total_ratings > 0) {
+          const sum = d.ratings.reduce((acc, curr) => acc + curr.rating, 0);
+          average_rating = sum / total_ratings;
+        }
+        return {
+          ...d,
+          total_ratings,
+          average_rating
+        }
+      }) || [];
 
       // Fetch recent ratings for feedback volume
       const fourteenDaysAgo = new Date();
@@ -230,8 +248,8 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="slide-up">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 slide-up">
+        <div>
           <h1 className="text-2xl md:text-3xl font-bold gradient-text">Dashboard</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Overview of your tricycle driver rating system
@@ -245,88 +263,51 @@ export default function DashboardHome() {
         </Link>
       </div>
 
-      {/* High-Level System Totals */}
-      <div>
+      {/* System Overview */}
+      <div className="slide-up" style={{ animationDelay: '100ms' }}>
         <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-          <Users className="h-5 w-5 text-primary" />
-          High-Level System Totals
+          <Activity className="h-5 w-5 text-primary" />
+          System Overview
         </h2>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 grid grid-cols-2 gap-4 stagger-children h-fit">
-            <StatsCard 
-              title="Total Ratings" 
-              value={stats.totalRatingsAllTime} 
-              subtitle="All-time feedback"
-              icon={Star}
-              delay={0}
-            />
-            <StatsCard 
-              title="Average Rating" 
-              value={stats.systemAvgRating > 0 ? stats.systemAvgRating.toFixed(1) : '—'} 
-              subtitle="System-wide average"
-              icon={Activity}
-              delay={50}
-            />
-            <StatsCard 
-              title="Active Registrations" 
-              value={stats.activeRegistered} 
-              subtitle="Currently valid"
-              icon={ShieldCheck}
-              delay={100}
-            />
-            <StatsCard 
-              title="Total Drivers" 
-              value={stats.activeDrivers} 
-              subtitle="All registered drivers"
-              icon={Users}
-              delay={150}
-            />
-          </div>
-          <div className="lg:col-span-1">
-            <Card className="glass-card border-border/30 h-full">
-              <CardHeader className="flex flex-row items-center gap-2 pb-4">
-                <MapPin className="h-5 w-5 text-blue-500" />
-                <CardTitle className="text-lg font-semibold">Top TODA by Ratings</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {topTodas.length === 0 ? (
-                  <div className="text-center py-6">
-                    <MapPin className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
-                    <p className="text-muted-foreground text-sm">No TODA ratings yet</p>
-                  </div>
-                ) : (
-                  topTodas.map((toda, index) => (
-                    <div key={toda.toda} className="flex items-center justify-between p-2.5 rounded-lg bg-background/50 border border-border/40">
-                      <div className="flex items-center gap-3">
-                        <div className="w-7 h-7 rounded-full bg-blue-500/10 text-blue-600 flex items-center justify-center font-bold text-xs">
-                          #{index + 1}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-sm">{toda.toda}</h4>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1.5 bg-amber-500/10 px-2.5 py-1 rounded-full">
-                        <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                        <span className="font-bold text-amber-600 dark:text-amber-400 text-xs">
-                          {toda.avgRating.toFixed(1)}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </CardContent>
-            </Card>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+          <StatsCard 
+            title="Total Ratings" 
+            value={stats.totalRatingsAllTime} 
+            subtitle="All-time feedback"
+            icon={Star}
+            delay={0}
+          />
+          <StatsCard 
+            title="Average Rating" 
+            value={stats.systemAvgRating > 0 ? stats.systemAvgRating.toFixed(1) : '—'} 
+            subtitle="System-wide average"
+            icon={Activity}
+            delay={50}
+          />
+          <StatsCard 
+            title="Active Registrations" 
+            value={stats.activeRegistered} 
+            subtitle="Currently valid"
+            icon={ShieldCheck}
+            delay={100}
+          />
+          <StatsCard 
+            title="Total Drivers" 
+            value={stats.activeDrivers} 
+            subtitle="All registered drivers"
+            icon={Users}
+            delay={150}
+          />
         </div>
       </div>
 
-      {/* Admin To-Do's */}
-      <div>
+      {/* System Alerts */}
+      <div className="slide-up" style={{ animationDelay: '200ms' }}>
         <h2 className="text-lg font-semibold mb-3 mt-6 flex items-center gap-2">
           <AlertTriangle className="h-5 w-5 text-amber-500" />
-          Admin To-Do's & Alerts
+          System Alerts
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
           <StatsCard 
             title="Total Registered Drivers" 
             value={stats.activeDrivers} 
@@ -355,74 +336,13 @@ export default function DashboardHome() {
             icon={AlertTriangle}
             delay={250}
           />
-          <StatsCard 
-            title="Total TODAs" 
-            value={stats.totalTodas} 
-            subtitle="Registered groups"
-            icon={MapPin}
-            delay={300}
-          />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Feedback Volume */}
-        <Card className="glass-card border-border/30 lg:col-span-1 flex flex-col justify-center">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Feedback Volume (This Week)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{stats.feedbackThisWeek}</div>
-            <p className={`text-sm flex items-center gap-1 mt-2 font-medium ${stats.feedbackTrend >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
-              {stats.feedbackTrend >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-              {stats.feedbackTrend > 0 ? '+' : ''}{stats.feedbackTrend}% from last week
-            </p>
-            <p className="text-xs text-muted-foreground mt-4">
-              Comparing ratings submitted this week vs the previous 7 days.
-            </p>
-          </CardContent>
-        </Card>
 
-        {/* Most Active TODA */}
-        <Card className="glass-card border-border/30 lg:col-span-1">
-          <CardHeader className="flex flex-row items-center gap-2 pb-4">
-            <BarChart3 className="h-5 w-5 text-emerald-500" />
-            <CardTitle className="text-lg font-semibold">Most Active TODA</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {mostActiveTodas.length === 0 ? (
-              <div className="text-center py-6">
-                <BarChart3 className="h-10 w-10 text-muted-foreground/30 mx-auto mb-2" />
-                <p className="text-muted-foreground text-sm">No TODA activity yet</p>
-              </div>
-            ) : (
-              mostActiveTodas.map((toda, index) => (
-                <div key={toda.toda} className="flex items-center justify-between p-2.5 rounded-lg bg-background/50 border border-border/40">
-                  <div className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-full bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold text-xs">
-                      #{index + 1}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-sm">{toda.toda}</h4>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-secondary px-2.5 py-1 rounded-full">
-                    <span className="font-bold text-secondary-foreground text-xs">
-                      {toda.volume} ratings
-                    </span>
-                  </div>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
-      </div>
 
       {/* Top 10 Drivers List */}
-      <Card className="glass-card border-border/30">
+      <Card className="glass-card border-border/30 slide-up" style={{ animationDelay: '300ms' }}>
         <CardHeader className="flex flex-row items-center gap-2">
           <List className="h-5 w-5 text-indigo-500" />
           <CardTitle className="text-lg font-semibold">Top 10 Drivers by Rating</CardTitle>
@@ -445,9 +365,9 @@ export default function DashboardHome() {
                     <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Rating</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/40">
+                <tbody className="divide-y divide-border/40 stagger-children">
                   {top10Drivers.map((driver, index) => (
-                    <tr key={driver.id} className="hover:bg-background/50 transition-colors">
+                    <tr key={driver.id} className="hover:bg-background/50 transition-colors slide-up" style={{ animationDelay: `${(index * 50) + 400}ms` }}>
                       <td className="px-4 py-3">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${
                           index === 0 ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-500' :
@@ -490,7 +410,7 @@ export default function DashboardHome() {
       </Card>
 
       {/* Low Performing Drivers List */}
-      <Card className="glass-card border-border/30 border-rose-500/20">
+      <Card className="glass-card border-border/30 border-rose-500/20 slide-up" style={{ animationDelay: '400ms' }}>
         <CardHeader className="flex flex-row items-center gap-2">
           <TrendingDown className="h-5 w-5 text-rose-500" />
           <CardTitle className="text-lg font-semibold text-rose-500">Low Performing Drivers Alert</CardTitle>

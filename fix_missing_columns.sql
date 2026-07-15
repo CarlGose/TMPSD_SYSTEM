@@ -24,6 +24,8 @@ ALTER TABLE drivers ADD COLUMN IF NOT EXISTS body_no TEXT;
 -- Add document columns if they don't exist
 ALTER TABLE drivers ADD COLUMN IF NOT EXISTS license_photo_url TEXT;
 ALTER TABLE drivers ADD COLUMN IF NOT EXISTS or_cr_url TEXT;
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS profile_picture_url TEXT;
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS tricycle_photo_url TEXT;
 
 -- Recreate the driver_stats view to include all columns
 CREATE OR REPLACE VIEW driver_stats AS
