@@ -206,7 +206,7 @@ export default function AddDriver() {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Register Driver & Operator</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Register Driver & Operator</h1>
         <p className="text-muted-foreground text-sm mt-1">
           Fill in the details below to register the Operator and Authorized Driver
         </p>

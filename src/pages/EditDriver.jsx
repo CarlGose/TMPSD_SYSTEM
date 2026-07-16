@@ -261,7 +261,7 @@ export default function EditDriver() {
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
-        <h1 className="text-2xl md:text-3xl font-bold gradient-text">Edit Driver & Operator</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Edit Driver & Operator</h1>
         <p className="text-muted-foreground text-sm mt-1">
           Update the details below for the Operator and Authorized Driver
         </p>

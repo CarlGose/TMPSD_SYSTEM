@@ -8,7 +8,6 @@ import {
   LogOut, 
   Menu, 
   X,
-  Star,
   ChevronRight,
   ChevronLeft,
   Sun,
@@ -55,14 +54,17 @@ export default function DashboardLayout({ children }) {
         isCollapsed ? 'lg:w-20' : 'lg:w-72'
       )}>
         {/* Logo */}
-        <div className={cn("p-6 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
-          <div className="p-2 rounded-xl bg-primary/20 text-primary shrink-0">
-            <Star className="h-6 w-6 fill-primary" />
-          </div>
+        <div className={cn("p-4 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
+          <img
+            src="/tmpsd-logo.png"
+            alt="TMPSD Logo"
+            className="w-12 h-12 rounded-full object-cover shrink-0 ring-2 ring-primary/40 shadow-lg"
+          />
           {!isCollapsed && (
-            <div className="animate-in fade-in zoom-in duration-300">
-              <h1 className="font-bold text-lg gradient-text whitespace-nowrap">TricycleRate</h1>
-              <p className="text-[10px] text-muted-foreground tracking-wider uppercase whitespace-nowrap">Admin Panel</p>
+            <div className="animate-in fade-in zoom-in duration-300 min-w-0">
+              <h1 className="font-bold text-sm gradient-text whitespace-nowrap leading-tight">TMPSD</h1>
+              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight">Palayan City, Nueva Ecija</p>
+              <p className="text-[9px] text-primary/70 tracking-wider uppercase whitespace-nowrap leading-tight">Admin Panel</p>
             </div>
           )}
           <Button 
@@ -166,8 +168,11 @@ export default function DashboardLayout({ children }) {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-primary fill-primary" />
-            <span className="font-bold gradient-text">TricycleRate</span>
+            <img src="/tmpsd-logo.png" alt="TMPSD" className="w-8 h-8 rounded-full object-cover ring-1 ring-primary/40" />
+            <div className="leading-tight">
+              <span className="font-bold gradient-text text-sm">TMPSD</span>
+              <p className="text-[9px] text-muted-foreground">Palayan City</p>
+            </div>
           </div>
         </header>
 

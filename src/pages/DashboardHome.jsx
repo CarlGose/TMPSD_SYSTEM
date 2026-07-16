@@ -250,7 +250,7 @@ export default function DashboardHome() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 slide-up">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground text-sm mt-1">
             Overview of your tricycle driver rating system
           </p>

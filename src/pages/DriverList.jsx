@@ -127,7 +127,7 @@ export default function DriverList() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 slide-up">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold gradient-text">Drivers</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Drivers</h1>
           <p className="text-muted-foreground text-sm mt-1">
             {drivers.length} registered driver{drivers.length !== 1 ? 's' : ''}
           </p>
@@ -201,7 +201,7 @@ export default function DriverList() {
             .map(([toda, todaDrivers]) => (
             <div key={toda} className="space-y-3">
               <div className="flex items-center gap-2 px-1">
-                <Badge variant="outline" className="bg-primary/20 text-primary border-primary/30 text-sm py-1 px-3">
+                <Badge variant="outline" className="bg-secondary/70 text-secondary-foreground border-secondary/50 text-sm py-1 px-3 font-semibold tracking-wide">
                   {toda}
                 </Badge>
                 <span className="text-xs font-medium text-muted-foreground">

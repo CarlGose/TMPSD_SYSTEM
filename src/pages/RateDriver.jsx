@@ -164,7 +164,7 @@ export default function RateDriver() {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold gradient-text mb-2">Thank You!</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Thank You!</h1>
           <p className="text-muted-foreground text-sm mb-2">
             Your rating for <strong className="text-foreground">{driverFullName}</strong> has been submitted.
           </p>
