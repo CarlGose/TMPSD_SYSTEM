@@ -25,7 +25,12 @@ export default function LoginPage() {
       await signIn(email, password)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.message || 'Invalid login credentials')
+      console.error('Login error:', err)
+      if (err?.message && err.message !== '{}') {
+        setError(err.message)
+      } else {
+        setError('Server error: Your admin account might be corrupted. Please recreate it in the Supabase Dashboard.')
+      }
     } finally {
       setLoading(false)
     }

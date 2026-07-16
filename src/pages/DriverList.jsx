@@ -20,6 +20,7 @@ export default function DriverList() {
   const [drivers, setDrivers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
 
   useEffect(() => {
     fetchDrivers()
@@ -64,7 +65,34 @@ export default function DriverList() {
       `${driver.first_name} ${driver.last_name} ${driver.plate_number}`
         .toLowerCase()
         .includes(search.toLowerCase())
-    return matchesSearch
+    
+    if (!matchesSearch) return false
+
+    if (statusFilter === 'all') return true
+
+    const currentDate = new Date()
+    const thirtyDaysFromNow = new Date()
+    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+
+    if (!driver.valid_until) {
+       return statusFilter === 'active' // If no date is set, assume active, or you could filter them out. Let's assume active if no date, or maybe they don't match expired/expiring.
+    }
+
+    const validUntil = new Date(driver.valid_until)
+
+    if (statusFilter === 'expired') {
+      return validUntil < currentDate
+    }
+
+    if (statusFilter === 'expiring_soon') {
+      return validUntil >= currentDate && validUntil <= thirtyDaysFromNow
+    }
+
+    if (statusFilter === 'active') {
+      return validUntil >= currentDate
+    }
+
+    return true
   })
 
   // Group drivers by TODA
@@ -112,7 +140,6 @@ export default function DriverList() {
         </Link>
       </div>
 
-      {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 slide-up" style={{ animationDelay: '100ms' }}>
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -122,6 +149,20 @@ export default function DriverList() {
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10 bg-input/50 border-border/50"
           />
+        </div>
+        <div className="w-full sm:w-[200px]">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="bg-input/50 border-border/50">
+              <Filter className="w-4 h-4 mr-2 text-muted-foreground" />
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Registrations</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="expiring_soon">Expiring Soon (30 days)</SelectItem>
+              <SelectItem value="expired">Expired</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -197,6 +238,15 @@ export default function DriverList() {
                             <p className="text-xs text-muted-foreground mt-1">
                               Plate: {driver.plate_number}
                             </p>
+                            {driver.valid_until && (
+                              <p className={`text-xs mt-1 font-medium ${
+                                new Date(driver.valid_until) < new Date() ? 'text-rose-500' :
+                                new Date(driver.valid_until) <= new Date(new Date().setDate(new Date().getDate() + 30)) ? 'text-amber-500' :
+                                'text-emerald-500'
+                              }`}>
+                                {new Date(driver.valid_until) < new Date() ? 'Expired' : 'Valid until'}: {new Date(driver.valid_until).toLocaleDateString()}
+                              </p>
+                            )}
                           </div>
                         </div>
 
