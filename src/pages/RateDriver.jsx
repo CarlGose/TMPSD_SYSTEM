@@ -228,6 +228,53 @@ export default function RateDriver() {
                 </p>
               </div>
             </div>
+
+            <Separator className="my-4 bg-border/30" />
+
+            {/* Driver & Operator Registration Details */}
+            <div className="rate-driver-details">
+              <div className="rate-detail-row">
+                <span className="rate-detail-label">Plate Number</span>
+                <span className="rate-detail-value">{driver.plate_number || '—'}</span>
+              </div>
+              <div className="rate-detail-row">
+                <span className="rate-detail-label">Body Number</span>
+                <span className="rate-detail-value">{driver.body_number || '—'}</span>
+              </div>
+              <div className="rate-detail-row">
+                <span className="rate-detail-label">TODA</span>
+                <span className="rate-detail-value">{driver.toda || '—'}</span>
+              </div>
+              <div className="rate-detail-row">
+                <span className="rate-detail-label">Driver Type</span>
+                <span className="rate-detail-value">{driver.driver_type === 'operator' ? 'Operator' : 'Authorized Driver'}</span>
+              </div>
+              {driver.driver_type !== 'operator' && driver.operator_name && (
+                <div className="rate-detail-row">
+                  <span className="rate-detail-label">Operator</span>
+                  <span className="rate-detail-value">{driver.operator_name}</span>
+                </div>
+              )}
+            </div>
+
+            <Separator className="my-4 bg-border/30" />
+
+            {/* Compliance Logos & Info */}
+            <div className="rate-card-compliance">
+              <div className="rate-compliance-logos">
+                <img src="/logos/NPC.png" alt="National Privacy Commission" className="rate-compliance-logo" />
+                <img src="/logos/ICT.png" alt="Department of Information and Communications Technology" className="rate-compliance-logo logo-circle" />
+              </div>
+              <p className="rate-powered-by">
+                Powered by <strong>Palayan City ICT Division</strong>
+              </p>
+              <p className="text-center text-xs text-muted-foreground/50">
+                Tricycle Driver Rating System &copy; {new Date().getFullYear()}
+              </p>
+              <p className="text-center text-[10px] text-muted-foreground/40">
+                Compliant with the Data Privacy Act of 2012 (RA 10173)
+              </p>
+            </div>
           </CardContent>
         </Card>
 
@@ -328,11 +375,6 @@ export default function RateDriver() {
             </CardContent>
           </Card>
         )}
-
-        {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground/50 pb-4">
-          Powered by TricycleRate
-        </p>
       </div>
     </div>
   )

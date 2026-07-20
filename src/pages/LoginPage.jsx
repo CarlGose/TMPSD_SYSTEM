@@ -47,25 +47,25 @@ export default function LoginPage() {
       </div>
 
       <div className="login-container slide-up">
-        {/* Logo section with glow */}
-        <div className="login-logo-section">
-          <div className="login-logo-ring">
-            <div className="login-logo-glow" />
-            <img
-              src="/logos/TMPSD.png"
-              alt="TMPSD Logo"
-              className="login-logo-img"
-            />
-          </div>
-          <h1 className="login-title">TMPSD</h1>
-          <p className="login-subtitle">Traffic Management and Public Safety Division</p>
-          <p className="login-location">Palayan City • Capital of Nueva Ecija</p>
-        </div>
-
-        {/* Glass card */}
+        {/* Unified Glass Card */}
         <div className="login-glass-card">
           {/* Top accent line */}
           <div className="login-card-accent" />
+
+          {/* Logo section with glow */}
+          <div className="login-logo-section">
+            <div className="login-logo-ring">
+              <div className="login-logo-glow" />
+              <img
+                src="/logos/TMPSD.png"
+                alt="TMPSD Logo"
+                className="login-logo-img"
+              />
+            </div>
+            <h1 className="login-title">TMPSD</h1>
+            <p className="login-subtitle">Traffic Management and Public Safety Division</p>
+            <p className="login-location">Palayan City • Capital of Nueva Ecija</p>
+          </div>
 
           <div className="login-card-header">
             <h2 className="login-card-title">Welcome Back</h2>
@@ -143,18 +143,27 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="login-card-footer">
+          {/* Government Compliance Footer */}
+          <div className="login-compliance-footer">
             <div className="login-divider">
               <span />
-              <p>Secured Access</p>
               <span />
             </div>
+            <div className="login-compliance-logos">
+              <img src="/logos/NPC.png" alt="National Privacy Commission" className="login-compliance-logo" />
+              <img src="/logos/ICT.png" alt="Department of Information and Communications Technology" className="login-compliance-logo logo-circle" />
+            </div>
+            <p className="login-powered-by">
+              Powered by <strong>Palayan City ICT Division</strong>
+            </p>
+            <p className="login-copyright">
+              Tricycle Driver Rating System &copy; {new Date().getFullYear()}
+            </p>
+            <p className="login-compliance-text">
+              This system complies with the Data Privacy Act of 2012 (RA 10173)
+            </p>
           </div>
         </div>
-
-        <p className="login-copyright">
-          Tricycle Driver Rating System &copy; {new Date().getFullYear()}
-        </p>
       </div>
     </div>
   )
