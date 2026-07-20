@@ -56,9 +56,9 @@ export default function DashboardLayout({ children }) {
         {/* Logo */}
         <div className={cn("p-4 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
           <img
-            src="/tmpsd-logo.png"
+            src="/logos/TMPSD.png"
             alt="TMPSD Logo"
-            className="w-12 h-12 rounded-full object-cover shrink-0 ring-2 ring-primary/40 shadow-lg"
+            className="w-14 h-14 shrink-0 object-contain rounded-full bg-white p-1 shadow-[0_0_0_2px_rgba(255,255,255,0.15)]"
           />
           {!isCollapsed && (
             <div className="animate-in fade-in zoom-in duration-300 min-w-0">
@@ -168,7 +168,7 @@ export default function DashboardLayout({ children }) {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <img src="/tmpsd-logo.png" alt="TMPSD" className="w-8 h-8 rounded-full object-cover ring-1 ring-primary/40" />
+            <img src="/logos/TMPSD.png" alt="TMPSD" className="w-9 h-9 object-contain rounded-full bg-white p-0.5" />
             <div className="leading-tight">
               <span className="font-bold gradient-text text-sm">TMPSD</span>
               <p className="text-[9px] text-muted-foreground">Palayan City</p>

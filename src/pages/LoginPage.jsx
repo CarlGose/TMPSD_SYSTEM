@@ -4,8 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Star, Loader2, Eye, EyeOff } from 'lucide-react'
+import { Loader2, Eye, EyeOff, Lock, Mail } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -37,38 +36,60 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen gradient-bg flex items-center justify-center p-4">
-      {/* Background decorative elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-chart-2/5 blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/3 blur-[100px]" />
+    <div className="login-page">
+      {/* Animated background */}
+      <div className="login-bg">
+        <div className="login-orb login-orb-1" />
+        <div className="login-orb login-orb-2" />
+        <div className="login-orb login-orb-3" />
+        <div className="login-orb login-orb-4" />
+        <div className="login-grid-overlay" />
       </div>
 
-      <div className="w-full max-w-md relative z-10 slide-up">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-4 rounded-2xl bg-primary/10 border border-primary/20 mb-4 glow">
-            <Star className="h-10 w-10 text-primary fill-primary" />
+      <div className="login-container slide-up">
+        {/* Logo section with glow */}
+        <div className="login-logo-section">
+          <div className="login-logo-ring">
+            <div className="login-logo-glow" />
+            <img
+              src="/logos/TMPSD.png"
+              alt="TMPSD Logo"
+              className="login-logo-img"
+            />
           </div>
-          <h1 className="text-3xl font-bold gradient-text mb-2">TricycleRate</h1>
-          <p className="text-muted-foreground text-sm">Admin Dashboard Login</p>
+          <h1 className="login-title">TMPSD</h1>
+          <p className="login-subtitle">Traffic Management and Public Safety Division</p>
+          <p className="login-location">Palayan City • Capital of Nueva Ecija</p>
         </div>
 
-        <Card className="glass-card border-border/30 shadow-2xl">
-          <CardHeader className="text-center pb-4">
-            <CardTitle className="text-xl">Welcome Back</CardTitle>
-            <CardDescription>Sign in to manage drivers and ratings</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {error && (
-                <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center fade-in">
-                  {error}
-                </div>
-              )}
+        {/* Glass card */}
+        <div className="login-glass-card">
+          {/* Top accent line */}
+          <div className="login-card-accent" />
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+          <div className="login-card-header">
+            <h2 className="login-card-title">Welcome Back</h2>
+            <p className="login-card-desc">Sign in to access the admin dashboard</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="login-form">
+            {error && (
+              <div className="login-error fade-in">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                {error}
+              </div>
+            )}
+
+            <div className="login-field">
+              <Label htmlFor="email" className="login-label">
+                <Mail className="login-label-icon" />
+                Email Address
+              </Label>
+              <div className="login-input-wrap">
                 <Input
                   id="email"
                   type="email"
@@ -76,51 +97,62 @@ export default function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="h-11 bg-input/50 border-border/50 focus:border-primary/50 transition-colors"
+                  className="login-input"
                 />
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="h-11 pr-10 bg-input/50 border-border/50 focus:border-primary/50 transition-colors"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
+            <div className="login-field">
+              <Label htmlFor="password" className="login-label">
+                <Lock className="login-label-icon" />
+                Password
+              </Label>
+              <div className="login-input-wrap">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="login-input login-input-password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="login-eye-btn"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
+            </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full h-11 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-primary/30"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 spinner" />
-                    Signing in...
-                  </>
-                ) : (
-                  'Sign In'
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+            <Button
+              type="submit"
+              disabled={loading}
+              className="login-submit-btn"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 spinner" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign In'
+              )}
+            </Button>
+          </form>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
+          <div className="login-card-footer">
+            <div className="login-divider">
+              <span />
+              <p>Secured Access</p>
+              <span />
+            </div>
+          </div>
+        </div>
+
+        <p className="login-copyright">
           Tricycle Driver Rating System &copy; {new Date().getFullYear()}
         </p>
       </div>

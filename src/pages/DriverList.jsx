@@ -214,12 +214,12 @@ export default function DriverList() {
                     <Card className="glass-card border-border/30 hover:border-primary/30 transition-all duration-300 glow-hover cursor-pointer group">
                       <CardContent className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div className="flex items-center gap-4 flex-1 min-w-0 w-full">
-                          {/* Avatar / Photo */}
-                          <div className="w-14 h-14 rounded-xl overflow-hidden bg-primary/10 shrink-0">
-                            {driver.tricycle_photo_url ? (
+                          {/* 2x2 ID Photo */}
+                          <div className="w-16 h-16 rounded-xl overflow-hidden bg-primary/10 shrink-0 border-2 border-border/30">
+                            {driver.profile_picture_url ? (
                               <img
-                                src={driver.tricycle_photo_url}
-                                alt="Tricycle"
+                                src={driver.profile_picture_url}
+                                alt={`${driver.first_name} ${driver.last_name}`}
                                 className="w-full h-full object-cover"
                               />
                             ) : (

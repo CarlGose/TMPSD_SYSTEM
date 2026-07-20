@@ -416,6 +416,7 @@ export default function DriverDetail() {
               <QRCodeDisplay
                 value={ratingPageUrl}
                 driverName={driverFullName}
+                driver={driver}
                 size={180}
               />
               <Separator className="my-4 bg-border/30" />
