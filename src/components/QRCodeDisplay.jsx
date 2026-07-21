@@ -65,7 +65,7 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
           <style>
             @page {
-              size: 12.7cm 8.89cm landscape;
+              size: 6in 5in landscape;
               margin: 0;
             }
             * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -81,11 +81,11 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
             }
 
             .id-card {
-              width: 12.7cm;
-              height: 8.89cm;
+              width: 6in;
+              height: 5in;
               background: #fff;
               border: 2px solid #1E301B;
-              border-radius: 6px;
+              border-radius: 8px;
               overflow: hidden;
               display: flex;
               flex-direction: column;
@@ -97,37 +97,37 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
             .card-header {
               background: linear-gradient(135deg, #1E301B, #324F2D);
               color: white;
-              padding: 6px 10px;
+              padding: 10px 16px;
               display: flex;
               align-items: center;
-              gap: 8px;
+              gap: 12px;
               flex-shrink: 0;
             }
             .card-header img {
-              width: 32px;
-              height: 32px;
+              width: 48px;
+              height: 48px;
               border-radius: 50%;
               background: white;
               padding: 2px;
               object-fit: contain;
             }
             .card-header-text h1 {
-              font-size: 12px;
+              font-size: 18px;
               font-weight: 800;
               color: #FFBF00;
               letter-spacing: 0.5px;
             }
             .card-header-text p {
-              font-size: 7px;
+              font-size: 10px;
               color: rgba(255,255,255,0.9);
               line-height: 1.1;
             }
             .card-header-text .sub {
-              font-size: 6px;
+              font-size: 9px;
               color: rgba(255,191,0,0.8);
               text-transform: uppercase;
               letter-spacing: 0.5px;
-              margin-top: 1px;
+              margin-top: 2px;
             }
 
             /* Title bar */
@@ -135,10 +135,10 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               background: #FFBF00;
               color: #1E301B;
               text-align: center;
-              padding: 3px;
-              font-size: 8px;
+              padding: 6px;
+              font-size: 12px;
               font-weight: 800;
-              letter-spacing: 1px;
+              letter-spacing: 1.5px;
               text-transform: uppercase;
               flex-shrink: 0;
             }
@@ -153,7 +153,7 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
             /* Left Column: Driver Info */
             .left-col {
               flex: 1.6;
-              padding: 4px 6px;
+              padding: 10px 14px;
               display: flex;
               flex-direction: column;
               border-right: 1px dashed #D1E0CC;
@@ -162,14 +162,14 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
 
             .photo-info-row {
               display: flex;
-              gap: 6px;
-              margin-bottom: 2px;
+              gap: 12px;
+              margin-bottom: 6px;
             }
             .photo-box {
-              width: 45px;
-              height: 45px;
+              width: 120px;
+              height: 120px;
               border: 2px solid #1E301B;
-              border-radius: 4px;
+              border-radius: 6px;
               overflow: hidden;
               flex-shrink: 0;
               background: #f9f9f9;
@@ -185,7 +185,7 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               display: flex;
               align-items: center;
               justify-content: center;
-              font-size: 16px;
+              font-size: 36px;
               font-weight: 800;
               color: #1E301B;
               background: #E6EDE4;
@@ -195,42 +195,42 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               display: flex;
               flex-direction: column;
               justify-content: flex-start;
-              gap: 1px;
+              gap: 4px;
             }
             .driver-name {
-              font-size: 10px;
+              font-size: 16px;
               font-weight: 800;
               color: #1E301B;
-              line-height: 1;
-              margin-bottom: 2px;
+              line-height: 1.1;
+              margin-bottom: 4px;
             }
             
             .info-grid {
               display: grid;
               grid-template-columns: 1fr 1fr;
-              gap: 2px 4px;
+              gap: 6px 8px;
             }
             .info-grid-3 {
               display: grid;
               grid-template-columns: 1fr 1fr 1fr;
-              gap: 2px 4px;
+              gap: 6px 8px;
             }
             .info-item {
               display: flex;
               flex-direction: column;
             }
             .info-item .label {
-              font-size: 5px;
+              font-size: 8px;
               text-transform: uppercase;
               color: #888;
               font-weight: 700;
-              line-height: 1;
+              line-height: 1.1;
             }
             .info-item .value {
-              font-size: 6.5px;
+              font-size: 11px;
               font-weight: 700;
               color: #1E301B;
-              line-height: 1.1;
+              line-height: 1.2;
               word-break: break-word;
             }
             .info-full {
@@ -238,15 +238,15 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
             }
 
             .section-title {
-              font-size: 5.5px;
+              font-size: 10px;
               font-weight: 800;
               color: #467235;
               text-transform: uppercase;
               letter-spacing: 0.5px;
               border-bottom: 1px solid #E6EDE4;
-              padding-bottom: 1px;
-              margin-bottom: 2px;
-              margin-top: 3px;
+              padding-bottom: 2px;
+              margin-bottom: 6px;
+              margin-top: 8px;
             }
 
             /* Right Column: QR & Complaint */
@@ -263,45 +263,45 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               flex-direction: column;
               align-items: center;
               justify-content: center;
-              padding: 2px;
+              padding: 4px;
               text-align: center;
             }
             .qr-box svg {
-              width: 75px !important;
-              height: 75px !important;
+              width: 150px !important;
+              height: 150px !important;
             }
             .qr-text {
-              margin-top: 2px;
+              margin-top: 8px;
             }
             .qr-text .scan-label {
-              font-size: 8px;
+              font-size: 16px;
               font-weight: 800;
               color: #1E301B;
             }
             .qr-text .scan-desc {
-              font-size: 5px;
+              font-size: 12px;
               color: #666;
-              line-height: 1.1;
-              margin-top: 1px;
+              line-height: 1.3;
+              margin-top: 4px;
             }
 
             .complaint-notice {
               background: linear-gradient(135deg, #FFF8E1, #FFFDE7);
               border-top: 1px solid #FFBF00;
-              padding: 4px;
+              padding: 6px 10px;
               flex-shrink: 0;
             }
             .complaint-notice .notice-title {
-              font-size: 6px;
+              font-size: 10px;
               font-weight: 800;
               color: #1E301B;
               text-transform: uppercase;
-              margin-bottom: 1px;
+              margin-bottom: 4px;
             }
             .complaint-notice .notice-text {
-              font-size: 5px;
+              font-size: 9px;
               color: #444;
-              line-height: 1.2;
+              line-height: 1.3;
             }
             .complaint-notice .notice-text strong {
               color: #1E301B;
@@ -312,8 +312,8 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               background: #1E301B;
               color: rgba(255,255,255,0.7);
               text-align: center;
-              padding: 3px;
-              font-size: 5px;
+              padding: 6px;
+              font-size: 9px;
               letter-spacing: 0.5px;
               flex-shrink: 0;
             }

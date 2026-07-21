@@ -299,9 +299,9 @@ export default function DriverList() {
                                 <span className="flex items-center gap-1.5 bg-background/40 px-2 py-1 rounded-md border border-border/30 backdrop-blur-sm shadow-inner text-xs sm:text-sm">
                                   Plate: <span className="text-primary font-bold">{driver.plate_number || 'N/A'}</span>
                                 </span>
-                                {driver.body_no && (
+                                {driver.permit_no && (
                                   <span className="flex items-center gap-1.5 bg-background/40 px-2 py-1 rounded-md border border-border/30 backdrop-blur-sm shadow-inner text-xs sm:text-sm">
-                                    Body: <span className="text-primary font-bold">{driver.body_no}</span>
+                                    Permit No: <span className="text-primary font-bold">{driver.permit_no}</span>
                                   </span>
                                 )}
                               </div>
