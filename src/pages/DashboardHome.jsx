@@ -248,7 +248,7 @@ export default function DashboardHome() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 slide-up">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 dash-section-header">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">Dashboard</h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -256,7 +256,7 @@ export default function DashboardHome() {
           </p>
         </div>
         <Link to="/dashboard/drivers/new">
-          <Button className="gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20">
+          <Button className="gap-2 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 dash-card-animate" style={{ animationDelay: '200ms' }}>
             <UserPlus className="h-4 w-4" />
             Add Driver
           </Button>
@@ -264,12 +264,12 @@ export default function DashboardHome() {
       </div>
 
       {/* System Overview */}
-      <div className="slide-up" style={{ animationDelay: '100ms' }}>
-        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+      <div>
+        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2 dash-section-header" style={{ animationDelay: '100ms' }}>
           <Activity className="h-5 w-5 text-primary" />
           System Overview
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
             title="Total Ratings" 
             value={stats.totalRatingsAllTime} 
@@ -302,12 +302,12 @@ export default function DashboardHome() {
       </div>
 
       {/* System Alerts */}
-      <div className="slide-up" style={{ animationDelay: '200ms' }}>
-        <h2 className="text-lg font-semibold mb-3 mt-6 flex items-center gap-2">
+      <div>
+        <h2 className="text-lg font-semibold mb-3 mt-6 flex items-center gap-2 dash-section-header" style={{ animationDelay: '300ms' }}>
           <AlertTriangle className="h-5 w-5 text-amber-500" />
           System Alerts
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 stagger-children">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
             title="Total Registered Drivers" 
             value={stats.activeDrivers} 
@@ -342,7 +342,7 @@ export default function DashboardHome() {
 
 
       {/* Top 10 Drivers List */}
-      <Card className="glass-card border-border/30 slide-up" style={{ animationDelay: '300ms' }}>
+      <Card className="glass-card border-border/30 dash-card-animate" style={{ animationDelay: '500ms' }}>
         <CardHeader className="flex flex-row items-center gap-2">
           <List className="h-5 w-5 text-indigo-500" />
           <CardTitle className="text-lg font-semibold">Top 10 Drivers by Rating</CardTitle>
@@ -356,7 +356,7 @@ export default function DashboardHome() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-background/50 border-b border-border/40">
+                <thead className="text-xs text-foreground uppercase bg-background/50 border-b border-border/40 font-semibold">
                   <tr>
                     <th className="px-4 py-3 font-medium rounded-tl-lg">Rank</th>
                     <th className="px-4 py-3 font-medium">Driver Name</th>
@@ -365,9 +365,9 @@ export default function DashboardHome() {
                     <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Rating</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/40 stagger-children">
+                <tbody className="divide-y divide-border/40">
                   {top10Drivers.map((driver, index) => (
-                    <tr key={driver.id} className="hover:bg-background/50 transition-colors slide-up" style={{ animationDelay: `${(index * 50) + 400}ms` }}>
+                    <tr key={driver.id} className="hover:bg-background/50 transition-colors dash-row-animate" style={{ animationDelay: `${(index * 60) + 600}ms` }}>
                       <td className="px-4 py-3">
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${
                           index === 0 ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-500' :
@@ -378,14 +378,14 @@ export default function DashboardHome() {
                           #{index + 1}
                         </div>
                       </td>
-                      <td className="px-4 py-3 font-medium">
+                      <td className="px-4 py-3 font-bold text-foreground">
                         {driver.first_name} {driver.last_name}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">
+                      <td className="px-4 py-3 text-foreground/90 font-medium">
                         {driver.plate_number}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-secondary text-secondary-foreground text-xs font-medium">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-xs font-bold shadow-sm">
                           {driver.toda_affiliation || 'N/A'}
                         </span>
                       </td>
@@ -395,7 +395,7 @@ export default function DashboardHome() {
                           <span className="font-bold text-amber-600 dark:text-amber-400">
                             {Number(driver.average_rating).toFixed(1)}
                           </span>
-                          <span className="text-xs text-muted-foreground ml-1">
+                          <span className="text-xs text-foreground/80 ml-1 font-medium">
                             ({driver.total_ratings})
                           </span>
                         </div>
@@ -410,7 +410,7 @@ export default function DashboardHome() {
       </Card>
 
       {/* Low Performing Drivers List */}
-      <Card className="glass-card border-border/30 border-rose-500/20 slide-up" style={{ animationDelay: '400ms' }}>
+      <Card className="glass-card border-border/30 border-rose-500/20 dash-card-animate" style={{ animationDelay: '700ms' }}>
         <CardHeader className="flex flex-row items-center gap-2">
           <TrendingDown className="h-5 w-5 text-rose-500" />
           <CardTitle className="text-lg font-semibold text-rose-500">Low Performing Drivers Alert</CardTitle>
@@ -424,7 +424,7 @@ export default function DashboardHome() {
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-muted-foreground uppercase bg-background/50 border-b border-border/40">
+                <thead className="text-xs text-foreground uppercase bg-background/50 border-b border-border/40 font-semibold">
                   <tr>
                     <th className="px-4 py-3 font-medium rounded-tl-lg">Driver Name</th>
                     <th className="px-4 py-3 font-medium">Plate Number</th>
@@ -435,14 +435,14 @@ export default function DashboardHome() {
                 <tbody className="divide-y divide-border/40">
                   {lowPerformingDrivers.map((driver) => (
                     <tr key={driver.id} className="hover:bg-rose-500/5 transition-colors">
-                      <td className="px-4 py-3 font-medium">
+                      <td className="px-4 py-3 font-bold text-foreground">
                         {driver.first_name} {driver.last_name}
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">
+                      <td className="px-4 py-3 text-foreground/90 font-medium">
                         {driver.plate_number}
                       </td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-secondary text-secondary-foreground text-xs font-medium">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-xs font-bold shadow-sm">
                           {driver.toda_affiliation || 'N/A'}
                         </span>
                       </td>
@@ -452,7 +452,7 @@ export default function DashboardHome() {
                           <span className="font-bold text-rose-600 dark:text-rose-400">
                             {Number(driver.average_rating).toFixed(1)}
                           </span>
-                          <span className="text-xs text-muted-foreground ml-1">
+                          <span className="text-xs text-foreground/80 ml-1 font-medium">
                             ({driver.total_ratings})
                           </span>
                         </div>

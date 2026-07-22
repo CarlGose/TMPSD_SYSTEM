@@ -57,14 +57,14 @@ export default function DashboardLayout({ children }) {
         <div className={cn("p-4 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
           <img
             src="/logos/TMPSD.png"
-            alt="TMPSD Logo"
+            alt="Traffic Management and Safe Division Logo"
             className="w-14 h-14 shrink-0 object-contain rounded-full bg-white p-1 shadow-[0_0_0_2px_rgba(255,255,255,0.15)]"
           />
           {!isCollapsed && (
             <div className="animate-in fade-in zoom-in duration-300 min-w-0">
-              <h1 className="font-bold text-sm gradient-text whitespace-nowrap leading-tight">TMPSD</h1>
-              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight">Palayan City, Nueva Ecija</p>
-              <p className="text-[9px] text-primary/70 tracking-wider uppercase whitespace-nowrap leading-tight">Admin Panel</p>
+              <h1 className="font-bold text-xs gradient-text whitespace-normal leading-tight">Traffic Management and Safe Division</h1>
+              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight mt-0.5">Palayan City, Nueva Ecija</p>
+              <p className="text-[9px] text-primary/70 tracking-wider uppercase whitespace-nowrap leading-tight mt-0.5">Admin Panel</p>
             </div>
           )}
           <Button 
@@ -168,10 +168,10 @@ export default function DashboardLayout({ children }) {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <img src="/logos/TMPSD.png" alt="TMPSD" className="w-9 h-9 object-contain rounded-full bg-white p-0.5" />
+            <img src="/logos/TMPSD.png" alt="Traffic Management and Safe Division" className="w-9 h-9 object-contain rounded-full bg-white p-0.5" />
             <div className="leading-tight">
-              <span className="font-bold gradient-text text-sm">TMPSD</span>
-              <p className="text-[9px] text-muted-foreground">Palayan City</p>
+              <span className="font-bold gradient-text text-xs whitespace-normal line-clamp-2">Traffic Management and Safe Division</span>
+              <p className="text-[9px] text-muted-foreground mt-0.5">Palayan City</p>
             </div>
           </div>
         </header>

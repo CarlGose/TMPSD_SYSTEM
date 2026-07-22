@@ -52,6 +52,14 @@ export default function DriverList() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [expandedTodas, setExpandedTodas] = useState({})
+
+  const toggleToda = (toda) => {
+    setExpandedTodas(prev => ({
+      ...prev,
+      [toda]: !prev[toda]
+    }))
+  }
 
   useEffect(() => {
     fetchDrivers()
@@ -241,22 +249,33 @@ export default function DriverList() {
                 if (b === 'Unassigned / No TODA') return -1;
                 return a.localeCompare(b);
               })
-              .map(([toda, todaDrivers]) => (
-              <div key={toda} className="space-y-5">
-                {/* Premium TODA Header */}
-                <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-card/80 to-transparent backdrop-blur-md rounded-2xl border-l-4 border-l-primary border-t border-t-border/20 border-b border-b-border/20 shadow-sm">
+              .map(([toda, todaDrivers]) => {
+                const isExpanded = expandedTodas[toda] || search.trim() !== '';
+                return (
+              <div key={toda} className="space-y-4">
+                {/* Premium TODA Header (Clickable for Accordion) */}
+                <div 
+                  onClick={() => toggleToda(toda)}
+                  className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-card/80 to-transparent backdrop-blur-md rounded-2xl border-l-4 border-l-primary border-t border-t-border/20 border-b border-b-border/20 shadow-sm cursor-pointer hover:bg-background/20 transition-all group"
+                >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/20 rounded-lg">
+                    <div className="p-2 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors">
                       <MapPin className="w-5 h-5 text-primary" />
                     </div>
                     <h2 className="text-lg font-extrabold text-foreground tracking-tight">{toda}</h2>
                   </div>
-                  <Badge className="bg-primary text-primary-foreground font-bold px-3 py-1.5 rounded-lg shadow-[0_0_10px_rgba(255,191,0,0.3)]">
-                    {todaDrivers.length} {todaDrivers.length === 1 ? 'Driver' : 'Drivers'}
-                  </Badge>
+                  <div className="flex items-center gap-4">
+                    <Badge className="bg-primary text-primary-foreground font-bold px-3 py-1.5 rounded-lg shadow-[0_0_10px_rgba(255,191,0,0.3)]">
+                      {todaDrivers.length} {todaDrivers.length === 1 ? 'Driver' : 'Drivers'}
+                    </Badge>
+                    <div className="text-primary/70 transition-transform duration-300">
+                      <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-primary' : ''}`} />
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex flex-col gap-5 stagger-children">
+                {isExpanded && (
+                  <div className="flex flex-col gap-4 animate-in slide-in-from-top-2 fade-in duration-300 pl-2 sm:pl-6 border-l-2 border-border/10 ml-3">
                   {todaDrivers.map((driver) => (
                     <Link key={driver.id} to={`/dashboard/drivers/${driver.id}`} className="block">
                       <Card className="glass-card glow-hover rounded-2xl cursor-pointer group transition-all duration-500 ease-in-out">
@@ -338,8 +357,9 @@ export default function DriverList() {
                     </Link>
                   ))}
                 </div>
+                )}
               </div>
-            ))}
+            )})}
           </div>
         )}
       </div>

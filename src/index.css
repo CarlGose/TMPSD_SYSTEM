@@ -331,6 +331,116 @@
 }
 
 /* ========================================
+   DASHBOARD ANIMATIONS
+   ======================================== */
+
+/* Card entrance — slides up with scale */
+@keyframes dashCardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dash-card-animate {
+  opacity: 0;
+  animation: dashCardEntrance 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Icon spin-in entrance */
+@keyframes dashIconSpin {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-180deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.dash-icon-spin {
+  opacity: 0;
+  animation: dashIconSpin 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Value number pop */
+@keyframes dashValuePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  70% {
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.dash-value-pop {
+  opacity: 0;
+  animation: dashValuePop 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Table row slide-in from right */
+@keyframes dashRowSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dash-row-animate {
+  opacity: 0;
+  animation: dashRowSlide 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Section header reveal */
+@keyframes dashSectionReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.dash-section-header {
+  opacity: 0;
+  animation: dashSectionReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Hover lift for glass cards in dashboard */
+.glass-card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease !important;
+}
+
+.glass-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 247, 141, 0.1) !important;
+}
+
+/* Shimmer loading placeholder */
+@keyframes dashShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ========================================
    LOGIN PAGE — Premium Glassmorphism
    ======================================== */
 
@@ -424,128 +534,268 @@
   50% { transform: translate(30px, 30px) scale(1.15); }
 }
 
-/* Login container */
-.login-container {
-  width: 100%;
-  max-width: 420px;
-  position: relative;
+/* ========================================
+   LOGIN ANIMATIONS
+   ======================================== */
+
+/* Card reveal — scales up from slightly smaller with blur */
+@keyframes loginCardReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(30px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.login-card-reveal {
+  animation: loginCardReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Staggered item fade-up */
+@keyframes loginItemFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-anim-item {
+  opacity: 0;
+  animation: loginItemFadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Subtle float for the logo */
+@keyframes loginLogoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.login-logo-float {
+  animation: loginLogoFloat 4s ease-in-out infinite;
+}
+
+/* Shimmer sweep across the split card border */
+@keyframes loginShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.login-split-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 191, 0, 0.0),
+    rgba(255, 191, 0, 0.5),
+    rgba(255, 247, 141, 0.8),
+    rgba(255, 191, 0, 0.5),
+    rgba(255, 191, 0, 0.0),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: loginShimmer 4s linear infinite;
   z-index: 10;
 }
 
-/* Logo section */
-.login-logo-section {
-  text-align: center;
-  margin-bottom: 2rem;
+/* Glow pulse on the active dot */
+@keyframes dotGlow {
+  0%, 100% { box-shadow: 0 0 4px rgba(255, 191, 0, 0.3); }
+  50% { box-shadow: 0 0 10px rgba(255, 191, 0, 0.6); }
 }
 
-.login-logo-ring {
+.login-split-dots .dot.active {
+  background: #FFBF00;
+  width: 35px;
+  animation: dotGlow 2s ease-in-out infinite;
+}
+
+/* Login container */
+.login-container {
+  width: 100%;
+  max-width: 900px;
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.25rem;
+  z-index: 10;
+  margin: 0 auto;
 }
 
-.login-logo-glow {
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 191, 0, 0.25), transparent 65%);
-  animation: logoGlow 3s ease-in-out infinite;
-}
-
-@keyframes logoGlow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.08); }
-}
-
-.login-logo-img {
-  width: 110px;
-  height: 110px;
-  object-fit: contain;
-  position: relative;
-  z-index: 2;
-  filter: drop-shadow(0 4px 20px rgba(255, 191, 0, 0.2));
-  border-radius: 50%;
-  background: white;
-  padding: 6px;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
-}
-
-.login-title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  background: linear-gradient(135deg, #FFBF00, #FFD54F, #FFF78D);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  margin-bottom: 0.25rem;
-}
-
-.login-subtitle {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: rgba(242, 247, 242, 0.7);
-  letter-spacing: 0.02em;
-}
-
-.login-location {
-  font-size: 0.7rem;
-  color: rgba(255, 191, 0, 0.6);
-  margin-top: 0.25rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Glass card */
-.login-glass-card {
+/* Split Card Layout */
+.login-split-card {
+  display: flex;
+  flex-direction: row;
   position: relative;
   background: linear-gradient(
     145deg,
-    rgba(50, 79, 45, 0.6),
-    rgba(40, 63, 36, 0.4)
+    rgba(30, 48, 27, 0.9),
+    rgba(20, 35, 18, 0.8)
   );
   backdrop-filter: blur(24px) saturate(1.4);
   -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid rgba(255, 191, 0, 0.12);
+  border: 1px solid rgba(255, 191, 0, 0.15);
   border-radius: 1.25rem;
-  padding: 2rem 1.75rem;
   box-shadow:
     0 24px 48px rgba(0, 0, 0, 0.4),
     0 8px 16px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 247, 141, 0.08),
     inset 0 -1px 0 rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  min-height: 550px;
 }
 
-.login-card-accent {
+@media (max-width: 768px) {
+  .login-split-card {
+    flex-direction: column;
+  }
+}
+
+/* Left Side (Premium Design) */
+.login-split-left {
+  flex: 1.2;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 3rem 2.5rem;
+  color: #fff;
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(145deg, #324f2d, #1a2e16);
+  background-size: 40px 40px, 40px 40px, auto;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* Beautiful dynamic shapes and mesh gradient effects */
+.login-split-left::before,
+.login-split-left::after {
+  content: '';
   position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #FFBF00, #FFD54F, #FFBF00, transparent);
-  border-radius: 0 0 4px 4px;
-  opacity: 0.8;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.login-split-left::before {
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255, 191, 0, 0.15) 0%, transparent 60%);
+  top: -50%;
+  left: -50%;
+  animation: floatOrb1 20s ease-in-out infinite;
+}
+
+.login-split-left::after {
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(70, 114, 53, 0.3) 0%, transparent 60%);
+  bottom: -50%;
+  right: -50%;
+  animation: floatOrb2 25s ease-in-out infinite reverse;
+}
+
+/* Title and Logo Inline Row */
+.login-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.login-inline-logo {
+  width: 55px;
+  height: 55px;
+  object-fit: contain;
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 0 20px rgba(255, 191, 0, 0.4), inset 0 0 10px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
+
+.login-title-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-split-left-content {
+  position: relative;
+  z-index: 2;
+}
+
+.login-split-left-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.35rem;
+  color: #F2F7F2;
+}
+
+.login-split-left-desc {
+  font-size: 0.75rem;
+  color: rgba(255, 191, 0, 0.8);
+  letter-spacing: 0.02em;
+  margin-bottom: 2rem;
+}
+
+.login-split-dots {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.login-split-dots .dot {
+  width: 25px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  transition: background 0.3s ease;
+}
+
+.login-split-dots .dot.active {
+  background: #FFBF00;
+  width: 35px;
+}
+
+/* Right Side (Form) */
+.login-split-right {
+  flex: 1;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* Card header */
 .login-card-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 1.75rem;
 }
 
 .login-card-title {
-  font-size: 1.35rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: #F2F7F2;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
 }
 
 .login-card-desc {
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: rgba(163, 194, 147, 0.8);
 }
 
@@ -712,7 +962,6 @@
    GOVERNMENT COMPLIANCE FOOTER
    ======================================== */
 
-/* Login Page Compliance Footer */
 .login-compliance-footer {
   display: flex;
   flex-direction: column;
@@ -720,6 +969,11 @@
   gap: 0.5rem;
   margin-top: 1rem;
   padding-top: 1rem;
+}
+
+.left-pane-footer {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 }
 
 .login-compliance-logos {
