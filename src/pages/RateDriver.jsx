@@ -190,23 +190,22 @@ export default function RateDriver() {
       <div className="relative z-10 max-w-md mx-auto px-4 py-8 space-y-6">
         {/* Driver Profile Card */}
         <Card className="glass-card border-border/30 overflow-hidden slide-up">
-          {/* Photo Banner */}
-          {driver.tricycle_photo_url && (
-            <div className="h-44 overflow-hidden">
-              <img
-                src={driver.tricycle_photo_url}
-                alt="Tricycle"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-
-          <CardContent className={`text-center ${driver.tricycle_photo_url ? 'pt-6' : 'pt-8'} pb-6 px-6`}>
+          <CardContent className="text-center pt-8 pb-6 px-4 sm:px-6">
             {/* Driver Avatar */}
-            <div className={`${driver.tricycle_photo_url ? '-mt-14' : ''} mb-4`}>
-              <div className="w-20 h-20 mx-auto rounded-full bg-primary/20 border-4 border-background flex items-center justify-center text-primary font-bold text-2xl shadow-lg">
-                {driver.first_name[0]}{driver.last_name[0]}
-              </div>
+            <div className="mb-4 relative z-10">
+              {driver.profile_picture_url ? (
+                <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-muted">
+                  <img 
+                    src={driver.profile_picture_url} 
+                    alt="Driver 2x2 Photo" 
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+              ) : (
+                <div className="w-28 h-28 mx-auto rounded-2xl bg-primary/20 border-4 border-background flex items-center justify-center text-primary font-bold text-3xl shadow-lg">
+                  {driver.first_name[0]}{driver.last_name[0]}
+                </div>
+              )}
             </div>
 
             <h1 className="text-xl font-bold text-foreground">{driverFullName}</h1>
@@ -255,6 +254,12 @@ export default function RateDriver() {
                   <span className="rate-detail-value">{driver.operator_name}</span>
                 </div>
               )}
+              <div className="rate-detail-row">
+                <span className="rate-detail-label">Registered Date</span>
+                <span className="rate-detail-value">
+                  {driver.created_at ? new Date(driver.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'}
+                </span>
+              </div>
             </div>
 
             <Separator className="my-4 bg-border/30" />
@@ -275,11 +280,22 @@ export default function RateDriver() {
                 Compliant with the Data Privacy Act of 2012 (RA 10173)
               </p>
             </div>
+
+            <div className="mt-6 pt-2">
+              <Button 
+                onClick={() => {
+                  document.getElementById('rating-form-section')?.scrollIntoView({ behavior: 'smooth' })
+                }}
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 rounded-xl transition-all duration-300"
+              >
+                Proceed to Rate This Driver
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Rating Form */}
-        <Card className="glass-card border-border/30 slide-up" style={{ animationDelay: '150ms' }}>
+        <Card id="rating-form-section" className="glass-card border-border/30 slide-up" style={{ animationDelay: '150ms' }}>
           <CardContent className="p-6">
             <h2 className="text-lg font-semibold text-foreground mb-1">Rate this Driver</h2>
             <p className="text-sm text-muted-foreground mb-5">

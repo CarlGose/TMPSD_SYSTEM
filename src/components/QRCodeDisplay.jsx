@@ -112,7 +112,7 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
               object-fit: contain;
             }
             .card-header-text h1 {
-              font-size: 18px;
+              font-size: 15px;
               font-weight: 800;
               color: #FFBF00;
               letter-spacing: 0.5px;
@@ -330,7 +330,7 @@ export default function QRCodeDisplay({ value, driverName, driver, size = 200 })
             <div class="card-header">
               <img src="/logos/TMPSD.png" alt="TMPSD" onerror="this.style.display='none'" />
               <div class="card-header-text">
-                <h1>TMPSD</h1>
+                <h1>Motorized Tricycle Operator Permit</h1>
                 <p>Traffic Management and Public Safety Division</p>
                 <div class="sub">Palayan City • Capital of Nueva Ecija</div>
               </div>
