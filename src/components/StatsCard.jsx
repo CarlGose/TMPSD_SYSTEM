@@ -46,12 +46,15 @@ export default function StatsCard({ title, value, subtitle, icon: Icon, classNam
   return (
     <Card 
       className={cn(
-        'glass-card border-border/50 hover:border-primary/30 transition-all duration-300 glow-hover overflow-hidden group dash-card-animate',
+        'glass-card border-border/50 hover:border-primary/30 transition-all duration-300 glow-hover overflow-hidden group dash-card-animate relative',
         className
       )}
       style={{ animationDelay: `${delay}ms` }}
     >
-      <CardContent className="p-6">
+      {/* Subtle background glow effect on hover */}
+      <div className="absolute -inset-2 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl z-0" />
+      
+      <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-sm font-medium text-white/70">{title}</p>

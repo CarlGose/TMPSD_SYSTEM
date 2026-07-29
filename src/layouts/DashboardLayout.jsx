@@ -90,19 +90,24 @@ export default function DashboardLayout({ children }) {
                 onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  'flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-200 group',
+                  'relative flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-300 group overflow-hidden',
                   isCollapsed ? 'justify-center px-2' : 'px-4',
                   isActive
-                    ? 'bg-primary/15 text-primary border border-primary/20'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                    ? 'bg-gradient-to-r from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/40 hover:border hover:border-border/50'
                 )}
               >
+                {/* Active Indicator Glow */}
+                {isActive && (
+                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-md shadow-[0_0_10px_rgba(255,191,0,0.8)]" />
+                )}
+                
                 <item.icon className={cn(
-                  'h-5 w-5 shrink-0 transition-colors',
-                  isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'
+                  'h-5 w-5 shrink-0 transition-all duration-300 relative z-10',
+                  isActive ? 'text-primary scale-110 drop-shadow-[0_0_8px_rgba(255,191,0,0.5)]' : 'text-muted-foreground group-hover:text-foreground group-hover:scale-110'
                 )} />
-                {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">{item.label}</span>}
-                {isActive && !isCollapsed && <ChevronRight className="h-4 w-4 ml-auto text-primary/60 shrink-0" />}
+                {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap relative z-10 font-bold tracking-wide">{item.label}</span>}
+                {isActive && !isCollapsed && <ChevronRight className="h-4 w-4 ml-auto text-primary shrink-0 relative z-10 drop-shadow-[0_0_5px_rgba(255,191,0,0.4)]" />}
               </Link>
             )
           })}

@@ -354,56 +354,50 @@ export default function DashboardHome() {
               <p className="text-muted-foreground text-sm">No drivers with ratings yet</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-foreground uppercase bg-background/50 border-b border-border/40 font-semibold">
-                  <tr>
-                    <th className="px-4 py-3 font-medium rounded-tl-lg">Rank</th>
-                    <th className="px-4 py-3 font-medium">Driver Name</th>
-                    <th className="px-4 py-3 font-medium">Plate Number</th>
-                    <th className="px-4 py-3 font-medium">TODA</th>
-                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {top10Drivers.map((driver, index) => (
-                    <tr key={driver.id} className="hover:bg-background/50 transition-colors dash-row-animate" style={{ animationDelay: `${(index * 60) + 600}ms` }}>
-                      <td className="px-4 py-3">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs ${
-                          index === 0 ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-500' :
-                          index === 1 ? 'bg-slate-300/20 text-slate-500 dark:text-slate-400' :
-                          index === 2 ? 'bg-amber-600/20 text-amber-700 dark:text-amber-600' :
-                          'bg-primary/10 text-primary'
-                        }`}>
-                          #{index + 1}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 font-bold text-foreground">
+            <div className="flex flex-col gap-3 mt-4">
+              {top10Drivers.map((driver, index) => (
+                <div 
+                  key={driver.id} 
+                  className="flex items-center justify-between p-4 rounded-2xl bg-background/40 border border-border/30 hover:bg-background/60 hover:border-primary/30 transition-all duration-300 group dash-row-animate shadow-sm hover:shadow-md" 
+                  style={{ animationDelay: `${(index * 60) + 600}ms` }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 shadow-inner ${
+                      index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white shadow-[0_0_15px_rgba(234,179,8,0.4)]' :
+                      index === 1 ? 'bg-gradient-to-br from-slate-300 to-slate-500 text-white shadow-[0_0_15px_rgba(148,163,184,0.4)]' :
+                      index === 2 ? 'bg-gradient-to-br from-amber-600 to-amber-800 text-white shadow-[0_0_15px_rgba(217,119,6,0.4)]' :
+                      'bg-primary/10 text-primary border border-primary/20'
+                    }`}>
+                      #{index + 1}
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-foreground text-base group-hover:text-primary transition-colors">
                         {driver.first_name} {driver.last_name}
-                      </td>
-                      <td className="px-4 py-3 text-foreground/90 font-medium">
-                        {driver.plate_number}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+                      </h4>
+                      <div className="flex items-center gap-3 mt-1 text-xs font-medium text-foreground/70">
+                        <span className="flex items-center gap-1">
+                          Plate: <span className="text-foreground/90 font-bold">{driver.plate_number || 'N/A'}</span>
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-primary/10 text-primary border border-primary/20 text-[10px] font-bold uppercase tracking-wider">
                           {driver.toda_affiliation || 'N/A'}
                         </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                          <span className="font-bold text-amber-600 dark:text-amber-400">
-                            {Number(driver.average_rating).toFixed(1)}
-                          </span>
-                          <span className="text-xs text-foreground/80 ml-1 font-medium">
-                            ({driver.total_ratings})
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end gap-1 px-3 py-1.5 rounded-xl bg-background/50 border border-border/20 shadow-inner">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Star className="h-4 w-4 text-amber-500 fill-amber-500 group-hover:scale-110 transition-transform duration-300" />
+                      <span className="text-lg font-bold text-amber-500">
+                        {Number(driver.average_rating).toFixed(1)}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-widest">
+                      {driver.total_ratings} Review{driver.total_ratings !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
@@ -422,45 +416,45 @@ export default function DashboardHome() {
               <p className="text-muted-foreground text-sm">Great! No low performing drivers right now.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-foreground uppercase bg-background/50 border-b border-border/40 font-semibold">
-                  <tr>
-                    <th className="px-4 py-3 font-medium rounded-tl-lg">Driver Name</th>
-                    <th className="px-4 py-3 font-medium">Plate Number</th>
-                    <th className="px-4 py-3 font-medium">TODA</th>
-                    <th className="px-4 py-3 font-medium text-right rounded-tr-lg">Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {lowPerformingDrivers.map((driver) => (
-                    <tr key={driver.id} className="hover:bg-rose-500/5 transition-colors">
-                      <td className="px-4 py-3 font-bold text-foreground">
+            <div className="flex flex-col gap-3 mt-4">
+              {lowPerformingDrivers.map((driver, index) => (
+                <div 
+                  key={driver.id} 
+                  className="flex items-center justify-between p-4 rounded-2xl bg-rose-500/5 border border-rose-500/20 hover:bg-rose-500/10 hover:border-rose-500/40 transition-all duration-300 group dash-row-animate shadow-sm"
+                  style={{ animationDelay: `${(index * 60) + 800}ms` }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-rose-500/20 flex items-center justify-center shrink-0 border border-rose-500/30">
+                      <TrendingDown className="h-5 w-5 text-rose-500" />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-foreground text-base group-hover:text-rose-500 transition-colors">
                         {driver.first_name} {driver.last_name}
-                      </td>
-                      <td className="px-4 py-3 text-foreground/90 font-medium">
-                        {driver.plate_number}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary text-primary-foreground text-xs font-bold shadow-sm">
+                      </h4>
+                      <div className="flex items-center gap-3 mt-1 text-xs font-medium text-foreground/70">
+                        <span className="flex items-center gap-1">
+                          Plate: <span className="text-foreground/90 font-bold">{driver.plate_number || 'N/A'}</span>
+                        </span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500 border border-rose-500/20 text-[10px] font-bold uppercase tracking-wider">
                           {driver.toda_affiliation || 'N/A'}
                         </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <div className="flex items-center justify-end gap-1.5">
-                          <Star className="h-3.5 w-3.5 text-rose-500 fill-rose-500" />
-                          <span className="font-bold text-rose-600 dark:text-rose-400">
-                            {Number(driver.average_rating).toFixed(1)}
-                          </span>
-                          <span className="text-xs text-foreground/80 ml-1 font-medium">
-                            ({driver.total_ratings})
-                          </span>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end gap-1 px-3 py-1.5 rounded-xl bg-background/50 border border-border/20 shadow-inner">
+                    <div className="flex items-center justify-end gap-1.5">
+                      <Star className="h-4 w-4 text-rose-500 fill-rose-500 group-hover:scale-110 transition-transform duration-300" />
+                      <span className="text-lg font-bold text-rose-500">
+                        {Number(driver.average_rating).toFixed(1)}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-bold text-foreground/50 uppercase tracking-widest">
+                      {driver.total_ratings} Review{driver.total_ratings !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </CardContent>

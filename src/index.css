@@ -72,7 +72,7 @@
     --chart-3: #467235;
     --chart-4: #60994A;
     --chart-5: #85CC6F;
-    --radius: 0.75rem;
+    --radius: 1.5rem;
     --sidebar: #1E301B;
     --sidebar-foreground: #F2F7F2;
     --sidebar-primary: #FFBF00;
@@ -133,7 +133,33 @@
   }
 }
 
-/* Premium glassmorphism card */
+/* Claymorphism styles for buttons */
+.bg-primary {
+  box-shadow: 
+    4px 4px 8px rgba(0, 0, 0, 0.2),
+    -2px -2px 6px rgba(255, 255, 255, 0.2),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.bg-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    6px 6px 12px rgba(0, 0, 0, 0.25),
+    -3px -3px 8px rgba(255, 255, 255, 0.25),
+    inset 2px 2px 6px rgba(255, 255, 255, 0.4),
+    inset -2px -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bg-primary:active {
+  transform: translateY(2px);
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.2),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.3);
+}
+
+/* Premium claymorphism card */
 .glass-card {
   --background: #283F24;
   --foreground: #F2F7F2;
@@ -154,16 +180,14 @@
   --input: #3A5C34;
   --ring: #FFBF00;
   
-  background: linear-gradient(135deg, 
-    rgba(70, 114, 53, 0.95), 
-    rgba(40, 63, 36, 0.98)
-  );
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 191, 0, 0.15);
+  background: var(--card);
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 247, 141, 0.05);
+    8px 8px 16px rgba(0, 0, 0, 0.3),
+    -4px -4px 12px rgba(255, 255, 255, 0.02),
+    inset 4px 4px 12px rgba(255, 255, 255, 0.08),
+    inset -4px -4px 12px rgba(0, 0, 0, 0.3);
   color: var(--foreground);
 }
 
@@ -175,33 +199,29 @@
   background-clip: text;
 }
 
-/* Animated gradient background */
+/* Animated gradient background with subtle grid overlay */
 .gradient-bg {
-  background: linear-gradient(-45deg, 
-    #F2F7F2, 
-    #FFFFFF, 
-    #E6EDE4, 
-    #F2F7F2
-  );
-  background-size: 400% 400%;
+  background: 
+    linear-gradient(rgba(70, 114, 53, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(70, 114, 53, 0.03) 1px, transparent 1px),
+    linear-gradient(-45deg, #F2F7F2, #FFFFFF, #E6EDE4, #F2F7F2);
+  background-size: 40px 40px, 40px 40px, 400% 400%;
   animation: gradientShift 15s ease infinite;
 }
 
 .dark .gradient-bg {
-  background: linear-gradient(-45deg, 
-    #283F24, 
-    #324F2D, 
-    #1E301B, 
-    #253A21
-  );
-  background-size: 400% 400%;
+  background: 
+    linear-gradient(rgba(255, 191, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 191, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(-45deg, #283F24, #324F2D, #1E301B, #253A21);
+  background-size: 40px 40px, 40px 40px, 400% 400%;
   animation: gradientShift 15s ease infinite;
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% { background-position: 0 0, 0 0, 0% 50%; }
+  50% { background-position: 20px 20px, 20px 20px, 100% 50%; }
+  100% { background-position: 40px 40px, 40px 40px, 0% 50%; }
 }
 
 /* Glow effect */
@@ -422,7 +442,7 @@
   animation: dashSectionReveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* Hover lift for glass cards in dashboard */
+/* Hover lift for clay cards in dashboard */
 .glass-card {
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease !important;
 }
@@ -430,8 +450,10 @@
 .glass-card:hover {
   transform: translateY(-4px) !important;
   box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 247, 141, 0.1) !important;
+    12px 12px 24px rgba(0, 0, 0, 0.4),
+    -6px -6px 16px rgba(255, 255, 255, 0.04),
+    inset 4px 4px 12px rgba(255, 255, 255, 0.12),
+    inset -4px -4px 12px rgba(0, 0, 0, 0.3) !important;
 }
 
 /* Shimmer loading placeholder */
@@ -632,25 +654,19 @@
   margin: 0 auto;
 }
 
-/* Split Card Layout */
+/* Split Card Layout - Claymorphism */
 .login-split-card {
   display: flex;
   flex-direction: row;
   position: relative;
-  background: linear-gradient(
-    145deg,
-    rgba(30, 48, 27, 0.9),
-    rgba(20, 35, 18, 0.8)
-  );
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  border: 1px solid rgba(255, 191, 0, 0.15);
-  border-radius: 1.25rem;
+  background: #1a2e16;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2.5rem;
   box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.4),
-    0 8px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 247, 141, 0.08),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    12px 12px 32px rgba(0, 0, 0, 0.6),
+    -6px -6px 20px rgba(255, 255, 255, 0.02),
+    inset 6px 6px 16px rgba(255, 255, 255, 0.08),
+    inset -6px -6px 16px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   min-height: 550px;
 }
