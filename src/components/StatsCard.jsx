@@ -56,17 +56,17 @@ export default function StatsCard({ title, value, subtitle, icon: Icon, classNam
       
       <CardContent className="p-6 relative z-10">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-white/70">{title}</p>
-            <p className="text-3xl font-bold tracking-tight text-white dash-value-pop" style={{ animationDelay: `${delay + 300}ms` }}>
+          <div className="space-y-1.5">
+            <p className="text-sm font-bold text-foreground/80">{title}</p>
+            <p className="text-3xl font-extrabold tracking-tight text-foreground dash-value-pop" style={{ animationDelay: `${delay + 300}ms` }}>
               {animatedValue}
             </p>
             {subtitle && (
-              <p className="text-xs text-white/55">{subtitle}</p>
+              <p className="text-xs font-semibold text-muted-foreground">{subtitle}</p>
             )}
           </div>
           {Icon && (
-            <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300 dash-icon-spin" style={{ animationDelay: `${delay + 200}ms` }}>
+            <div className="p-3 rounded-xl bg-primary text-primary-foreground font-bold shadow-md group-hover:scale-110 transition-all duration-300 dash-icon-spin shrink-0" style={{ animationDelay: `${delay + 200}ms` }}>
               <Icon className="h-5 w-5" />
             </div>
           )}

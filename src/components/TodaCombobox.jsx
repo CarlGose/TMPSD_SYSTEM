@@ -37,12 +37,12 @@ export default function TodaCombobox({ value, onChange }) {
 
       {/* Dropdown Content */}
       {open && (
-        <div className="absolute z-50 w-full mt-1 bg-background/95 backdrop-blur-md border border-border/50 rounded-xl shadow-lg overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute z-[9999] left-0 right-0 sm:right-auto sm:min-w-[300px] mt-1 bg-popover text-popover-foreground border border-border shadow-2xl rounded-xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
           {/* Search Input inside Dropdown */}
-          <div className="flex items-center px-3 border-b border-border/50 sticky top-0 bg-background/50 backdrop-blur-sm z-10">
-            <Search className="w-4 h-4 mr-2 opacity-50 shrink-0" />
+          <div className="flex items-center px-3 border-b border-border/50 sticky top-0 bg-popover z-10">
+            <Search className="w-4 h-4 mr-2 opacity-50 shrink-0 text-muted-foreground" />
             <input
-              className="flex w-full py-3 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
+              className="flex w-full py-3 text-sm bg-transparent outline-none placeholder:text-muted-foreground text-foreground"
               placeholder="Search TODA..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -66,12 +66,12 @@ export default function TodaCombobox({ value, onChange }) {
                     setOpen(false)
                     setSearch('')
                   }}
-                  className={`relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 px-3 text-sm outline-none transition-colors hover:bg-primary/10 hover:text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50 ${value === toda ? 'bg-primary/15 text-primary font-medium' : 'text-foreground/80'}`}
+                  className={`relative flex w-full cursor-pointer items-center rounded-lg py-2.5 px-3 text-sm outline-none transition-colors hover:bg-primary/20 hover:text-primary ${value === toda ? 'bg-primary/20 text-primary font-medium' : 'text-foreground'}`}
                 >
                   <MapPin className={`w-4 h-4 mr-3 shrink-0 ${value === toda ? 'text-primary' : 'text-muted-foreground'}`} />
-                  <span className="truncate text-left flex-1">{toda}</span>
+                  <span className="text-left flex-1 font-medium">{toda}</span>
                   {value === toda && (
-                    <Check className="w-4 h-4 ml-auto text-primary shrink-0" />
+                    <Check className="w-4 h-4 ml-2 text-primary shrink-0" />
                   )}
                 </button>
               ))

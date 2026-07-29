@@ -113,6 +113,7 @@ export default function AddDriver() {
     middle_name: '',      
     address: '',
     license: '',
+    license_validity: '',
     toda_affiliation: '',
     // Vehicle
     permit_no: '',
@@ -265,6 +266,7 @@ export default function AddDriver() {
           middle_name: form.middle_name || null,
           address: form.address || null,
           license: form.license || 'N/A',
+          license_validity: form.license_validity || null,
           toda_affiliation: form.toda_affiliation || null,
           operator_first_name: form.operator_first_name || null,
           operator_last_name: form.operator_last_name || null,
@@ -453,55 +455,64 @@ export default function AddDriver() {
                   </Label>
                 </div>
 
+                {!sameAsOperator && (
+                  <>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="space-y-2">
+                        <Label>Driver First Name *</Label>
+                        <Input
+                          required
+                          value={form.first_name}
+                          onChange={(e) => handleChange('first_name', e.target.value)}
+                          className="bg-input/50 border-border/50"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Driver Last Name *</Label>
+                        <Input
+                          required
+                          value={form.last_name}
+                          onChange={(e) => handleChange('last_name', e.target.value)}
+                          className="bg-input/50 border-border/50"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Driver Middle Name</Label>
+                        <Input
+                          value={form.middle_name}
+                          onChange={(e) => handleChange('middle_name', e.target.value)}
+                          className="bg-input/50 border-border/50"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Driver Address</Label>
+                      <Input
+                        value={form.address}
+                        onChange={(e) => handleChange('address', e.target.value)}
+                        className="bg-input/50 border-border/50"
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="space-y-2">
-                    <Label>Driver First Name *</Label>
-                    <Input
-                      required
-                      disabled={sameAsOperator}
-                      value={form.first_name}
-                      onChange={(e) => handleChange('first_name', e.target.value)}
-                      className="bg-input/50 border-border/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Driver Last Name *</Label>
-                    <Input
-                      required
-                      disabled={sameAsOperator}
-                      value={form.last_name}
-                      onChange={(e) => handleChange('last_name', e.target.value)}
-                      className="bg-input/50 border-border/50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Driver Middle Name</Label>
-                    <Input
-                      disabled={sameAsOperator}
-                      value={form.middle_name}
-                      onChange={(e) => handleChange('middle_name', e.target.value)}
-                      className="bg-input/50 border-border/50"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Driver Address</Label>
-                  <Input
-                    disabled={sameAsOperator}
-                    value={form.address}
-                    onChange={(e) => handleChange('address', e.target.value)}
-                    className="bg-input/50 border-border/50"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Driver's License No. *</Label>
                     <Input
                       required
                       value={form.license}
                       onChange={(e) => handleChange('license', e.target.value)}
+                      className="bg-input/50 border-border/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>License Valid Until</Label>
+                    <Input
+                      type="date"
+                      value={form.license_validity}
+                      onChange={(e) => handleChange('license_validity', e.target.value)}
                       className="bg-input/50 border-border/50"
                     />
                   </div>
@@ -674,15 +685,17 @@ export default function AddDriver() {
 
       {/* Summary Modal */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Review Registration Details</DialogTitle>
-            <DialogDescription>
-              Please double check all information before submitting to the database.
-            </DialogDescription>
-          </DialogHeader>
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
+          <div className="px-6 pt-6 pb-2">
+            <DialogHeader>
+              <DialogTitle>Review Registration Details</DialogTitle>
+              <DialogDescription>
+                Please double check all information before submitting to the database.
+              </DialogDescription>
+            </DialogHeader>
+          </div>
           
-          <div className="space-y-6 py-4">
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div className="space-y-1">
                 <p className="font-semibold text-foreground border-b border-border/50 pb-1 mb-2">Operator</p>
@@ -693,6 +706,7 @@ export default function AddDriver() {
                 <p className="font-semibold text-foreground border-b border-border/50 pb-1 mb-2">Driver</p>
                 <p><span className="text-muted-foreground">Name:</span> {form.first_name} {form.middle_name} {form.last_name}</p>
                 <p><span className="text-muted-foreground">License:</span> {form.license}</p>
+                <p><span className="text-muted-foreground">License Valid Until:</span> {form.license_validity ? new Date(form.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
                 <p><span className="text-muted-foreground">TODA:</span> {form.toda_affiliation || 'N/A'}</p>
               </div>
               <div className="space-y-1 col-span-2">
@@ -720,19 +734,19 @@ export default function AddDriver() {
             </div>
           </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowSummary(false)} disabled={loading}>
+          <DialogFooter className="m-0 sm:m-0 px-6 py-4 bg-card/90 backdrop-blur-md border-t border-border/50 flex flex-row items-center justify-end gap-3 w-full">
+            <Button variant="outline" size="lg" className="flex-1 sm:flex-none font-bold" onClick={() => setShowSummary(false)} disabled={loading}>
               Edit Details
             </Button>
-            <Button onClick={handleSubmit} disabled={loading}>
+            <Button size="lg" className="flex-1 sm:flex-none font-bold bg-primary text-primary-foreground" onClick={handleSubmit} disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 spinner" />
+                  <Loader2 className="h-5 w-5 mr-2 spinner" />
                   Saving...
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  <CheckCircle2 className="h-5 w-5 mr-2" />
                   Confirm & Submit
                 </>
               )}

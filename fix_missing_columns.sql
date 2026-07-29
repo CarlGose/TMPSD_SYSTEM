@@ -6,6 +6,9 @@
 -- Add address column if it doesn't exist
 ALTER TABLE drivers ADD COLUMN IF NOT EXISTS address TEXT;
 
+-- Add license_validity column if it doesn't exist
+ALTER TABLE drivers ADD COLUMN IF NOT EXISTS license_validity DATE;
+
 -- Add operator columns if they don't exist
 ALTER TABLE drivers ADD COLUMN IF NOT EXISTS operator_first_name TEXT;
 ALTER TABLE drivers ADD COLUMN IF NOT EXISTS operator_last_name TEXT;

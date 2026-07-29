@@ -31,6 +31,7 @@ export default function EditDriver() {
     middle_name: '',      
     address: '',
     license: '',
+    license_validity: '',
     toda_affiliation: '',
     // Operator
     operator_first_name: '',
@@ -74,6 +75,7 @@ export default function EditDriver() {
             middle_name: data.middle_name || '',      
             address: data.address || '',
             license: data.license || '',
+            license_validity: data.license_validity || '',
             toda_affiliation: data.toda_affiliation || '',
             operator_first_name: data.operator_first_name || '',
             operator_last_name: data.operator_last_name || '',
@@ -157,6 +159,7 @@ export default function EditDriver() {
           middle_name: form.middle_name || null,
           address: form.address || null,
           license: form.license || 'N/A',
+          license_validity: form.license_validity || null,
           toda_affiliation: form.toda_affiliation || null,
           operator_first_name: form.operator_first_name || null,
           operator_last_name: form.operator_last_name || null,
@@ -367,13 +370,22 @@ export default function EditDriver() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Driver's License No. *</Label>
                   <Input
                     required
                     value={form.license}
                     onChange={(e) => handleChange('license', e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>License Valid Until</Label>
+                  <Input
+                    type="date"
+                    value={form.license_validity}
+                    onChange={(e) => handleChange('license_validity', e.target.value)}
                     className="bg-input/50 border-border/50"
                   />
                 </div>

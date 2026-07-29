@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS drivers (
     middle_name TEXT,
     plate_number TEXT NOT NULL,
     license TEXT NOT NULL,
+    license_validity DATE,
     body_sticker TEXT NOT NULL,
     driver_type driver_type NOT NULL DEFAULT 'operator',
     address TEXT,

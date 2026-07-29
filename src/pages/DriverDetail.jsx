@@ -254,6 +254,7 @@ export default function DriverDetail() {
                 <InfoItem icon={FileText} label="Address" value={driver.address || 'N/A'} />
                 <InfoItem icon={FileText} label="TODA Affiliation" value={driver.toda_affiliation || 'N/A'} />
                 <InfoItem icon={Shield} label="License" value={driver.license} />
+                <InfoItem icon={Calendar} label="License Valid Until" value={driver.license_validity ? new Date(driver.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'} />
                 <InfoItem icon={Calendar} label="Registered" value={format(new Date(driver.created_at), 'MMMM d, yyyy')} />
               </div>
 

@@ -52,7 +52,7 @@ export default function DashboardLayout({ children }) {
         'fixed lg:sticky top-0 left-0 z-50 h-screen glass-card border-r border-border/30 flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0',
         sidebarOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0',
         isCollapsed ? 'lg:w-20' : 'lg:w-72'
-      )}>
+      )} style={{ borderRadius: 0 }}>
         {/* Logo */}
         <div className={cn("p-4 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
           <img
@@ -62,9 +62,9 @@ export default function DashboardLayout({ children }) {
           />
           {!isCollapsed && (
             <div className="animate-in fade-in zoom-in duration-300 min-w-0">
-              <h1 className="font-bold text-xs gradient-text whitespace-normal leading-tight">Traffic Management and Safe Division</h1>
-              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight mt-0.5">Palayan City, Nueva Ecija</p>
-              <p className="text-[9px] text-primary/70 tracking-wider uppercase whitespace-nowrap leading-tight mt-0.5">Admin Panel</p>
+              <h1 className="font-bold text-xs text-foreground whitespace-normal leading-tight">Traffic Management and Safe Division</h1>
+              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight mt-0.5 font-medium">Palayan City, Nueva Ecija</p>
+              <p className="text-[9px] text-primary dark:text-amber-400 font-extrabold tracking-wider uppercase whitespace-nowrap leading-tight mt-0.5">Admin Panel</p>
             </div>
           )}
           <Button 
@@ -77,10 +77,10 @@ export default function DashboardLayout({ children }) {
           </Button>
         </div>
 
-        <Separator className="bg-border/30" />
+        <Separator className="bg-border/50" />
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-1">
+        <nav className="flex-1 p-4 space-y-1.5">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path
             return (
@@ -90,24 +90,19 @@ export default function DashboardLayout({ children }) {
                 onClick={() => setSidebarOpen(false)}
                 title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  'relative flex items-center gap-3 py-3 rounded-xl text-sm font-medium transition-all duration-300 group overflow-hidden',
+                  'relative flex items-center gap-3 py-3 rounded-xl text-sm font-bold transition-all duration-200 group overflow-hidden',
                   isCollapsed ? 'justify-center px-2' : 'px-4',
                   isActive
-                    ? 'bg-gradient-to-r from-primary/20 to-primary/5 text-primary border border-primary/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-background/40 hover:border hover:border-border/50'
+                    ? 'bg-primary text-primary-foreground shadow-md font-bold'
+                    : 'text-foreground/80 hover:text-foreground hover:bg-muted/60 font-medium'
                 )}
               >
-                {/* Active Indicator Glow */}
-                {isActive && (
-                  <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-md shadow-[0_0_10px_rgba(255,191,0,0.8)]" />
-                )}
-                
                 <item.icon className={cn(
-                  'h-5 w-5 shrink-0 transition-all duration-300 relative z-10',
-                  isActive ? 'text-primary scale-110 drop-shadow-[0_0_8px_rgba(255,191,0,0.5)]' : 'text-muted-foreground group-hover:text-foreground group-hover:scale-110'
+                  'h-5 w-5 shrink-0 transition-all duration-200 relative z-10',
+                  isActive ? 'text-primary-foreground scale-110' : 'text-foreground/75 group-hover:text-foreground group-hover:scale-110'
                 )} />
                 {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap relative z-10 font-bold tracking-wide">{item.label}</span>}
-                {isActive && !isCollapsed && <ChevronRight className="h-4 w-4 ml-auto text-primary shrink-0 relative z-10 drop-shadow-[0_0_5px_rgba(255,191,0,0.4)]" />}
+                {isActive && !isCollapsed && <ChevronRight className="h-4 w-4 ml-auto text-primary-foreground shrink-0 relative z-10" />}
               </Link>
             )
           })}

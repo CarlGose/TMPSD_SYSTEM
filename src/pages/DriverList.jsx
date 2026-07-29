@@ -253,22 +253,22 @@ export default function DriverList() {
                 const isExpanded = expandedTodas[toda] || search.trim() !== '';
                 return (
               <div key={toda} className="space-y-4">
-                {/* Premium TODA Header (Clickable for Accordion) */}
+                {/* High Contrast Neomorphic TODA Header */}
                 <div 
                   onClick={() => toggleToda(toda)}
-                  className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-card/80 to-transparent backdrop-blur-md rounded-2xl border-l-4 border-l-primary border-t border-t-border/20 border-b border-b-border/20 shadow-sm cursor-pointer hover:bg-background/20 transition-all group"
+                  className="glass-card p-4 sm:p-5 rounded-2xl border-l-4 border-l-primary border border-border/80 flex items-center justify-between cursor-pointer hover:border-primary/60 transition-all duration-300 group shadow-md"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/20 rounded-lg group-hover:bg-primary/30 transition-colors">
-                      <MapPin className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-10 h-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shrink-0 shadow-md group-hover:scale-105 transition-transform">
+                      <MapPin className="w-5 h-5" />
                     </div>
-                    <h2 className="text-lg font-extrabold text-foreground tracking-tight">{toda}</h2>
+                    <h2 className="text-base sm:text-lg font-extrabold text-foreground tracking-tight">{toda}</h2>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Badge className="bg-primary text-primary-foreground font-bold px-3 py-1.5 rounded-lg shadow-[0_0_10px_rgba(255,191,0,0.3)]">
+                  <div className="flex items-center gap-3">
+                    <Badge className="bg-primary text-primary-foreground font-bold px-3.5 py-1.5 rounded-full shadow-md text-xs sm:text-sm">
                       {todaDrivers.length} {todaDrivers.length === 1 ? 'Driver' : 'Drivers'}
                     </Badge>
-                    <div className="text-primary/70 transition-transform duration-300">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/30 text-primary flex items-center justify-center transition-transform duration-300">
                       <ChevronRight className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-90 text-primary' : ''}`} />
                     </div>
                   </div>
@@ -328,7 +328,13 @@ export default function DriverList() {
                               {driver.valid_until && (
                                 <p className="text-xs mt-2 text-foreground/70 flex items-center gap-1.5 font-medium">
                                   <Clock className="w-4 h-4 text-primary/70" />
-                                  Valid until: <span className="text-foreground/90 font-bold">{new Date(driver.valid_until).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                  Permit valid until: <span className="text-foreground/90 font-bold">{new Date(driver.valid_until).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                </p>
+                              )}
+                              {driver.license_validity && (
+                                <p className="text-xs mt-1 text-foreground/70 flex items-center gap-1.5 font-medium">
+                                  <Clock className="w-4 h-4 text-primary/70" />
+                                  License valid until: <span className="text-foreground/90 font-bold">{new Date(driver.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                 </p>
                               )}
                             </div>
