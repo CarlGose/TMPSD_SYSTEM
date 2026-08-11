@@ -30,19 +30,39 @@ import {
 } from 'lucide-react'
 
 const getDriverStatus = (driver) => {
-  if (!driver.valid_until) {
-    return { label: 'Incomplete', Icon: Clock, colorClass: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/30' }
-  }
-  
-  const validUntil = new Date(driver.valid_until)
   const now = new Date()
   const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
 
-  if (validUntil < now) {
-    return { label: 'Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+  let isPermitExpired = false
+  let isPermitExpiring = false
+  if (driver.valid_until) {
+    const v = new Date(driver.valid_until)
+    if (v < now) isPermitExpired = true
+    else if (v <= thirtyDays) isPermitExpiring = true
   }
-  if (validUntil <= thirtyDays) {
-    return { label: 'Expiring', Icon: AlertCircle, colorClass: 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' }
+
+  let isLicenseExpired = false
+  let isLicenseExpiring = false
+  if (driver.license_validity) {
+    const lv = new Date(driver.license_validity)
+    if (lv < now) isLicenseExpired = true
+    else if (lv <= thirtyDays) isLicenseExpiring = true
+  }
+
+  if (isLicenseExpired && isPermitExpired) {
+    return { label: 'License & Permit Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+  }
+  if (isLicenseExpired) {
+    return { label: 'License Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+  }
+  if (isPermitExpired) {
+    return { label: 'Permit Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+  }
+  if (isLicenseExpiring || isPermitExpiring) {
+    return { label: 'Expiring Soon', Icon: AlertCircle, colorClass: 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' }
+  }
+  if (!driver.valid_until && !driver.license_validity) {
+    return { label: 'Incomplete', Icon: Clock, colorClass: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/30' }
   }
   return { label: 'Active', Icon: CheckCircle2, colorClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]' }
 }
@@ -108,26 +128,18 @@ export default function DriverList() {
 
     if (statusFilter === 'all') return true
 
-    const currentDate = new Date()
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-
-    if (!driver.valid_until) {
-       return statusFilter === 'active' 
-    }
-
-    const validUntil = new Date(driver.valid_until)
+    const status = getDriverStatus(driver)
 
     if (statusFilter === 'expired') {
-      return validUntil < currentDate
+      return status.label.includes('Expired')
     }
 
     if (statusFilter === 'expiring_soon') {
-      return validUntil >= currentDate && validUntil <= thirtyDaysFromNow
+      return status.label === 'Expiring Soon'
     }
 
     if (statusFilter === 'active') {
-      return validUntil >= currentDate
+      return status.label === 'Active'
     }
 
     return true

@@ -238,20 +238,36 @@ export default function RateDriver() {
               </div>
               <div className="rate-detail-row">
                 <span className="rate-detail-label">Body Number</span>
-                <span className="rate-detail-value">{driver.body_number || '—'}</span>
-              </div>
-              <div className="rate-detail-row">
-                <span className="rate-detail-label">TODA</span>
-                <span className="rate-detail-value">{driver.toda || '—'}</span>
+                <span className="rate-detail-value">{driver.body_no || driver.body_number || driver.body_sticker || '—'}</span>
               </div>
               <div className="rate-detail-row">
                 <span className="rate-detail-label">Driver Type</span>
                 <span className="rate-detail-value">{driver.driver_type === 'operator' ? 'Operator' : 'Authorized Driver'}</span>
               </div>
-              {driver.driver_type !== 'operator' && driver.operator_name && (
+              {driver.license && (
                 <div className="rate-detail-row">
-                  <span className="rate-detail-label">Operator</span>
-                  <span className="rate-detail-value">{driver.operator_name}</span>
+                  <span className="rate-detail-label">License No.</span>
+                  <span className="rate-detail-value">{driver.license}</span>
+                </div>
+              )}
+              <div className="rate-detail-row col-span-2">
+                <span className="rate-detail-label">TODA</span>
+                <span className="rate-detail-value">{driver.toda_affiliation || driver.toda || '—'}</span>
+              </div>
+              {(driver.operator_name || driver.operator_first_name) && (
+                <div className="rate-detail-row col-span-2">
+                  <span className="rate-detail-label">Operator Name</span>
+                  <span className="rate-detail-value">
+                    {driver.operator_name || [driver.operator_first_name, driver.operator_middle_name, driver.operator_last_name].filter(Boolean).join(' ')}
+                  </span>
+                </div>
+              )}
+              {driver.license_validity && (
+                <div className="rate-detail-row">
+                  <span className="rate-detail-label">License Validity</span>
+                  <span className="rate-detail-value">
+                    {new Date(driver.license_validity).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                  </span>
                 </div>
               )}
               <div className="rate-detail-row">
@@ -354,12 +370,17 @@ export default function RateDriver() {
               <Button
                 type="submit"
                 disabled={rating === 0 || submitting}
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all duration-300"
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:grayscale transition-all duration-300"
               >
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 spinner" />
                     Submitting...
+                  </>
+                ) : rating === 0 ? (
+                  <>
+                    <Star className="h-4 w-4 mr-2" />
+                    Select a Rating First
                   </>
                 ) : (
                   <>

@@ -140,12 +140,24 @@ export default function DriverDetail() {
     ? `${driver.first_name} ${driver.middle_name ? driver.middle_name + ' ' : ''}${driver.last_name}`
     : ''
 
-  let needsRenewal = false
+  const now = new Date()
+  const thirtyDaysFromNow = new Date()
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
+
+  let isPermitExpired = false
+  let isPermitExpiring = false
   if (driver?.valid_until) {
     const validUntilDate = new Date(driver.valid_until)
-    const thirtyDaysFromNow = new Date()
-    thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
-    needsRenewal = validUntilDate <= thirtyDaysFromNow
+    if (validUntilDate < now) isPermitExpired = true
+    else if (validUntilDate <= thirtyDaysFromNow) isPermitExpiring = true
+  }
+
+  let isLicenseExpired = false
+  let isLicenseExpiring = false
+  if (driver?.license_validity) {
+    const licenseValDate = new Date(driver.license_validity)
+    if (licenseValDate < now) isLicenseExpired = true
+    else if (licenseValDate <= thirtyDaysFromNow) isLicenseExpiring = true
   }
 
   const ratingPageUrl = `${window.location.origin}/rate/${id}`
@@ -180,13 +192,28 @@ export default function DriverDetail() {
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
             {driverFullName}
           </h1>
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
             <span className="text-xs text-muted-foreground">
               Registered {format(new Date(driver.created_at), 'MMM d, yyyy')}
             </span>
-            {needsRenewal && (
-              <Badge variant="destructive" className="animate-pulse">
-                Permit Expired / Expiring Soon
+            {isLicenseExpired && (
+              <Badge variant="destructive" className="animate-pulse bg-rose-500/20 text-rose-300 border-rose-500/50">
+                Driver License Expired
+              </Badge>
+            )}
+            {isLicenseExpiring && !isLicenseExpired && (
+              <Badge variant="outline" className="bg-amber-500/20 text-amber-300 border-amber-500/50">
+                License Expiring Soon
+              </Badge>
+            )}
+            {isPermitExpired && (
+              <Badge variant="destructive" className="animate-pulse bg-rose-500/20 text-rose-300 border-rose-500/50">
+                Permit Expired
+              </Badge>
+            )}
+            {isPermitExpiring && !isPermitExpired && (
+              <Badge variant="outline" className="bg-amber-500/20 text-amber-300 border-amber-500/50">
+                Permit Expiring Soon
               </Badge>
             )}
           </div>
@@ -254,7 +281,25 @@ export default function DriverDetail() {
                 <InfoItem icon={FileText} label="Address" value={driver.address || 'N/A'} />
                 <InfoItem icon={FileText} label="TODA Affiliation" value={driver.toda_affiliation || 'N/A'} />
                 <InfoItem icon={Shield} label="License" value={driver.license} />
-                <InfoItem icon={Calendar} label="License Valid Until" value={driver.license_validity ? new Date(driver.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'} />
+                <InfoItem 
+                  icon={Calendar} 
+                  label="License Valid Until" 
+                  value={
+                    <span className="flex items-center gap-2 flex-wrap">
+                      {driver.license_validity ? new Date(driver.license_validity).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                      {isLicenseExpired && (
+                        <span className="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Expired
+                        </span>
+                      )}
+                      {isLicenseExpiring && !isLicenseExpired && (
+                        <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Expiring Soon
+                        </span>
+                      )}
+                    </span>
+                  } 
+                />
                 <InfoItem icon={Calendar} label="Registered" value={format(new Date(driver.created_at), 'MMMM d, yyyy')} />
               </div>
 
@@ -267,7 +312,25 @@ export default function DriverDetail() {
               <h4 className="font-semibold text-foreground border-b border-border/20 pb-2 mb-4">Tricycle Details</h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <InfoItem icon={FileText} label="Permit No." value={driver.permit_no || 'N/A'} />
-                <InfoItem icon={Calendar} label="Valid Until" value={driver.valid_until || 'N/A'} />
+                <InfoItem 
+                  icon={Calendar} 
+                  label="Permit Valid Until" 
+                  value={
+                    <span className="flex items-center gap-2 flex-wrap">
+                      {driver.valid_until ? new Date(driver.valid_until).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}
+                      {isPermitExpired && (
+                        <span className="text-[10px] bg-rose-500/20 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Expired
+                        </span>
+                      )}
+                      {isPermitExpiring && !isPermitExpired && (
+                        <span className="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                          Expiring Soon
+                        </span>
+                      )}
+                    </span>
+                  } 
+                />
                 <InfoItem icon={FileText} label="OR No." value={driver.or_no || 'N/A'} />
                 <InfoItem icon={FileText} label="Make" value={driver.make || 'N/A'} />
                 <InfoItem icon={FileText} label="Motor No." value={driver.motor_no || 'N/A'} />

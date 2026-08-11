@@ -16,7 +16,9 @@ import {
   Camera,
   ArrowRight,
   Video,
-  Eye
+  Eye,
+  User,
+  Shield
 } from 'lucide-react'
 import TodaCombobox from '@/components/TodaCombobox'
 import {
@@ -685,51 +687,151 @@ export default function AddDriver() {
 
       {/* Summary Modal */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-          <div className="px-6 pt-6 pb-2">
+        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 overflow-hidden glass-card border-border/40">
+          <div className="px-6 pt-6 pb-3 border-b border-border/20 bg-muted/10">
             <DialogHeader>
-              <DialogTitle>Review Registration Details</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary" />
+                Review Registration Details
+              </DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">
                 Please double check all information before submitting to the database.
               </DialogDescription>
             </DialogHeader>
           </div>
           
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="space-y-1">
-                <p className="font-semibold text-foreground border-b border-border/50 pb-1 mb-2">Operator</p>
-                <p><span className="text-muted-foreground">Name:</span> {form.operator_first_name} {form.operator_middle_name} {form.operator_last_name}</p>
-                <p><span className="text-muted-foreground">Address:</span> {form.operator_address || 'N/A'}</p>
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+            {/* Section 1: Operator & Driver Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Operator Box */}
+              <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
+                <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
+                  <User className="h-4 w-4 text-primary" />
+                  Operator Details
+                </h4>
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Full Name</span>
+                    <span className="font-semibold text-foreground text-sm">
+                      {[form.operator_first_name, form.operator_middle_name, form.operator_last_name].filter(Boolean).join(' ') || 'N/A'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Address</span>
+                    <span className="font-medium text-foreground">{form.operator_address || 'N/A'}</span>
+                  </div>
+                </div>
               </div>
-              <div className="space-y-1">
-                <p className="font-semibold text-foreground border-b border-border/50 pb-1 mb-2">Driver</p>
-                <p><span className="text-muted-foreground">Name:</span> {form.first_name} {form.middle_name} {form.last_name}</p>
-                <p><span className="text-muted-foreground">License:</span> {form.license}</p>
-                <p><span className="text-muted-foreground">License Valid Until:</span> {form.license_validity ? new Date(form.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</p>
-                <p><span className="text-muted-foreground">TODA:</span> {form.toda_affiliation || 'N/A'}</p>
-              </div>
-              <div className="space-y-1 col-span-2">
-                <p className="font-semibold text-foreground border-b border-border/50 pb-1 mb-2">Tricycle Details</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <p><span className="text-muted-foreground">Plate No:</span> {form.plate_number}</p>
-                  <p><span className="text-muted-foreground">Body No:</span> {form.body_no}</p>
-                  <p><span className="text-muted-foreground">Make:</span> {form.make || 'N/A'}</p>
-                  <p><span className="text-muted-foreground">Permit No:</span> {form.permit_no || 'N/A'}</p>
+
+              {/* Driver Box */}
+              <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
+                <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" />
+                  Authorized Driver Details
+                </h4>
+                <div className="space-y-2 text-xs">
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Full Name</span>
+                    <span className="font-semibold text-foreground text-sm">
+                      {[form.first_name, form.middle_name, form.last_name].filter(Boolean).join(' ') || 'N/A'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">License No.</span>
+                      <span className="font-medium text-foreground">{form.license || 'N/A'}</span>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Valid Until</span>
+                      <span className="font-medium text-foreground">
+                        {form.license_validity ? new Date(form.license_validity).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                      </span>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">TODA Affiliation</span>
+                    <span className="font-medium text-foreground">{form.toda_affiliation || 'N/A'}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="font-semibold text-foreground border-b border-border/50 pb-1 text-sm">Uploaded Documents</p>
-              <div className="flex gap-4 overflow-x-auto pb-2">
-                {profilePreview && <img src={profilePreview} alt="Profile" className="h-20 w-20 object-cover rounded-md border" />}
-                {licensePreview && <img src={licensePreview} alt="License" className="h-20 w-32 object-cover rounded-md border" />}
-                {orCrPreview && <img src={orCrPreview} alt="ORCR" className="h-20 w-32 object-cover rounded-md border" />}
-                {tricyclePreview && <img src={tricyclePreview} alt="Tricycle" className="h-20 w-32 object-cover rounded-md border" />}
-                {!profilePreview && !licensePreview && !orCrPreview && !tricyclePreview && (
-                  <p className="text-muted-foreground text-sm italic">No photos uploaded.</p>
-                )}
+            {/* Section 2: Tricycle Details */}
+            <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
+              <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" />
+                Tricycle & Permit Information
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Plate Number</span>
+                  <span className="font-bold text-primary text-sm">{form.plate_number || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Body Number</span>
+                  <span className="font-bold text-foreground text-sm">{form.body_no || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Make (Brand)</span>
+                  <span className="font-medium text-foreground">{form.make || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Permit Number</span>
+                  <span className="font-medium text-foreground">{form.permit_no || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Uploaded Documents Grid */}
+            <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
+              <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
+                <ImageIcon className="h-4 w-4 text-primary" />
+                Uploaded Documents
+              </h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="space-y-1.5 text-center">
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Profile Picture</p>
+                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                    {profilePreview ? (
+                      <img src={profilePreview} alt="Profile" className="w-full h-full object-contain rounded-md" />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground italic">None</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-center">
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Driver's License</p>
+                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                    {licensePreview ? (
+                      <img src={licensePreview} alt="License" className="w-full h-full object-contain rounded-md" />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground italic">None</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-center">
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">OR / CR Document</p>
+                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                    {orCrPreview ? (
+                      <img src={orCrPreview} alt="OR/CR" className="w-full h-full object-contain rounded-md" />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground italic">None</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5 text-center">
+                  <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Tricycle Photo</p>
+                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                    {tricyclePreview ? (
+                      <img src={tricyclePreview} alt="Tricycle" className="w-full h-full object-contain rounded-md" />
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground italic">None</span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
