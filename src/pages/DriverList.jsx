@@ -26,8 +26,10 @@ import {
   Clock,
   ChevronRight,
   IdCard,
-  MapPin
+  MapPin,
+  Printer
 } from 'lucide-react'
+import { getIDCardStyles, generateIDCardHTML } from '@/lib/idCardTemplate'
 
 const getDriverStatus = (driver) => {
   const now = new Date()
@@ -171,6 +173,45 @@ export default function DriverList() {
     )
   }
 
+  const handlePrintID = (e, driver) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    const printWindow = window.open('', '_blank')
+    
+    const driverFullName = `${driver.first_name} ${driver.middle_name ? driver.middle_name + ' ' : ''}${driver.last_name}`
+    const operatorFullName = [driver.operator_first_name, driver.operator_middle_name, driver.operator_last_name].filter(Boolean).join(' ') || 'N/A'
+    const profilePic = driver.profile_picture_url || ''
+    const ratingPageUrl = `${window.location.origin}/rate/${driver.id}`
+    const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(ratingPageUrl)}`
+    
+    const qrContent = `<img src="${qrImageUrl}" alt="QR Code" crossorigin="anonymous" />`
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Driver ID Card - ${driverFullName}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+          <style>
+            ${getIDCardStyles()}
+          </style>
+        </head>
+        <body>
+          ${generateIDCardHTML(driver, driverFullName, operatorFullName, profilePic, qrContent)}
+        </body>
+      </html>
+    `
+    
+    printWindow.document.write(html)
+    printWindow.document.close()
+    
+    // Give external QR code images some time to load before printing
+    setTimeout(() => {
+      printWindow.print()
+    }, 1000)
+  }
+
   return (
     <div className="space-y-8 pb-12">
       {/* Premium Header - Using glass-card from your index.css */}
@@ -186,12 +227,14 @@ export default function DriverList() {
           </p>
         </div>
         
-        <Link to="/dashboard/drivers/new" className="relative z-10 w-full sm:w-auto">
-          <Button size="lg" className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-[0_0_20px_rgba(255,191,0,0.4)] rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,191,0,0.6)]">
-            <UserPlus className="h-5 w-5" />
-            Register New Driver
-          </Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-3 relative z-10 w-full sm:w-auto">
+          <Link to="/dashboard/drivers/new" className="w-full sm:w-auto">
+            <Button size="lg" className="w-full sm:w-auto gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-[0_0_20px_rgba(255,191,0,0.4)] rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,191,0,0.6)]">
+              <UserPlus className="h-5 w-5" />
+              Register New Driver
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Modern Search & Filters */}
@@ -365,9 +408,19 @@ export default function DriverList() {
                                 {driver.totalRatings} Review{driver.totalRatings !== 1 ? 's' : ''}
                               </span>
                             </div>
-                            
-                            <div className="w-10 h-10 rounded-full bg-background/50 border border-primary/20 text-primary flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground group-hover:shadow-[0_0_15px_rgba(255,191,0,0.5)] transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] transform group-hover:scale-110 group-hover:translate-x-1 shrink-0 hidden sm:flex">
-                              <ChevronRight className="w-5 h-5" />
+                            <div className="flex items-center gap-2 mt-3 sm:mt-0">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={(e) => handlePrintID(e, driver)}
+                                className="h-10 px-3 bg-background/50 border-primary/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-300 gap-1.5 font-bold shadow-sm"
+                              >
+                                <Printer className="w-4 h-4" />
+                                <span className="hidden sm:inline">Print ID</span>
+                              </Button>
+                              <div className="w-10 h-10 rounded-full bg-background/50 border border-primary/20 text-primary flex items-center justify-center group-hover:bg-primary group-hover:border-primary group-hover:text-primary-foreground group-hover:shadow-[0_0_15px_rgba(255,191,0,0.5)] transition-all duration-[600ms] ease-[cubic-bezier(0.23,1,0.32,1)] transform group-hover:scale-110 group-hover:translate-x-1 shrink-0 hidden sm:flex">
+                                <ChevronRight className="w-5 h-5" />
+                              </div>
                             </div>
                           </div>
                         </CardContent>

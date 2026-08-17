@@ -5,6 +5,7 @@ import {
   LayoutDashboard, 
   Users, 
   UserPlus, 
+  ShieldAlert,
   LogOut, 
   Menu, 
   X,
@@ -22,6 +23,7 @@ const navItems = [
   { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
   { label: 'All Drivers', icon: Users, path: '/dashboard/drivers' },
   { label: 'Add Driver', icon: UserPlus, path: '/dashboard/drivers/new' },
+  { label: 'Suspended / Inactive', icon: ShieldAlert, path: '/dashboard/suspended' },
 ]
 
 export default function DashboardLayout({ children }) {
@@ -57,13 +59,13 @@ export default function DashboardLayout({ children }) {
         <div className={cn("p-4 flex items-center gap-3 transition-all", isCollapsed ? "justify-center px-2" : "")}>
           <img
             src="/logos/TMPSD.png"
-            alt="Traffic Management and Safe Division Logo"
+            alt="Traffic Management and Public Safety Division Logo"
             className="w-14 h-14 shrink-0 object-contain rounded-full bg-white p-1 shadow-[0_0_0_2px_rgba(255,255,255,0.15)]"
           />
           {!isCollapsed && (
             <div className="animate-in fade-in zoom-in duration-300 min-w-0">
-              <h1 className="font-bold text-xs text-foreground whitespace-normal leading-tight">Traffic Management and Safe Division</h1>
-              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight mt-0.5 font-medium">Palayan City, Nueva Ecija</p>
+              <h1 className="font-bold text-xs text-foreground whitespace-normal leading-tight">Traffic Management and Public Safety Division</h1>
+              <p className="text-[10px] text-muted-foreground tracking-wide whitespace-nowrap leading-tight mt-1 font-medium">Palayan City, Nueva Ecija</p>
               <p className="text-[9px] text-primary dark:text-amber-400 font-extrabold tracking-wider uppercase whitespace-nowrap leading-tight mt-0.5">Admin Panel</p>
             </div>
           )}
@@ -113,13 +115,13 @@ export default function DashboardLayout({ children }) {
         {/* User section & Collapse Toggle */}
         <div className="p-4 flex flex-col gap-2">
           <div className={cn("flex items-center gap-3 py-2 transition-all", isCollapsed ? "justify-center px-0" : "px-3")}>
-            <div className="w-8 h-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
+            <div className="w-8 h-8 shrink-0 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs shadow-sm border border-primary/20">
               {user?.email?.[0]?.toUpperCase() || 'A'}
             </div>
             {!isCollapsed && (
               <div className="flex-1 min-w-0 animate-in fade-in duration-300">
-                <p className="text-xs font-medium text-foreground truncate">{user?.email || 'Admin'}</p>
-                <p className="text-[10px] text-muted-foreground">Administrator</p>
+                <p className="text-xs font-semibold text-foreground truncate" title={user?.email || 'Admin'}>{user?.email || 'Admin'}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5 font-medium uppercase tracking-wider">Administrator</p>
               </div>
             )}
           </div>
@@ -130,28 +132,28 @@ export default function DashboardLayout({ children }) {
             onClick={handleSignOut}
           >
             <LogOut className="h-4 w-4 shrink-0" />
-            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Sign Out</span>}
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap font-medium">Sign Out</span>}
           </Button>
 
           <Button
             variant="ghost"
             title={isCollapsed ? "Toggle Theme" : undefined}
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className={cn("w-full gap-3 text-muted-foreground hover:text-foreground", isCollapsed ? "justify-center px-2" : "justify-start")}
+            className={cn("w-full gap-3 text-muted-foreground hover:text-foreground hover:bg-muted/60", isCollapsed ? "justify-center px-2" : "justify-start")}
           >
             {theme === 'dark' ? <Sun className="h-4 w-4 shrink-0" /> : <Moon className="h-4 w-4 shrink-0" />}
-            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Toggle Theme</span>}
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap font-medium">Toggle Theme</span>}
           </Button>
 
           {/* Desktop Only Collapse Toggle */}
           <Button
             variant="ghost"
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex w-full mt-2 gap-3 text-muted-foreground hover:text-foreground"
+            className="hidden lg:flex w-full mt-2 gap-3 text-muted-foreground hover:text-foreground hover:bg-muted/60"
             title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4 shrink-0" /> : <ChevronLeft className="h-4 w-4 shrink-0" />}
-            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap">Collapse</span>}
+            {!isCollapsed && <span className="animate-in fade-in duration-300 whitespace-nowrap font-medium">Collapse</span>}
           </Button>
         </div>
       </aside>
@@ -168,9 +170,9 @@ export default function DashboardLayout({ children }) {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <img src="/logos/TMPSD.png" alt="Traffic Management and Safe Division" className="w-9 h-9 object-contain rounded-full bg-white p-0.5" />
+            <img src="/logos/TMPSD.png" alt="Traffic Management and Public Safety Division" className="w-9 h-9 object-contain rounded-full bg-white p-0.5" />
             <div className="leading-tight">
-              <span className="font-bold gradient-text text-xs whitespace-normal line-clamp-2">Traffic Management and Safe Division</span>
+              <span className="font-bold gradient-text text-xs whitespace-normal line-clamp-2">Traffic Management and Public Safety Division</span>
               <p className="text-[9px] text-muted-foreground mt-0.5">Palayan City</p>
             </div>
           </div>

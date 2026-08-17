@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import StatsCard from '@/components/StatsCard'
-import { Users, UserCheck, Trophy, MapPin, UserPlus, Star, List, AlertTriangle, UserX, MessageSquare, TrendingUp, TrendingDown, BarChart3, Clock, ImageOff, ShieldCheck, Activity } from 'lucide-react'
+import { Users, UserCheck, Trophy, MapPin, UserPlus, Star, List, AlertTriangle, UserX, MessageSquare, TrendingUp, TrendingDown, BarChart3, Clock, ImageOff, ShieldCheck, Activity, CheckCircle2, XCircle, FileCheck, ShieldAlert } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -20,7 +20,9 @@ export default function DashboardHome() {
     expiringSoon: 0,
     missingPhotos: 0,
     newlyAddedWeek: 0,
-    systemAvgRating: 0
+    validLicenses: 0,
+    invalidLicenses: 0,
+    expiringLicenses: 0
   })
   const [topDrivers, setTopDrivers] = useState([])
   const [top10Drivers, setTop10Drivers] = useState([])
@@ -104,17 +106,13 @@ export default function DashboardHome() {
       let expiringSoon = 0;
       let missingPhotos = 0;
       let newlyAddedWeek = 0;
-      let sumOfAverages = 0;
-      let driversWithRatings = 0;
+      let validLicenses = 0;
+      let invalidLicenses = 0;
+      let expiringLicenses = 0;
       const uniqueTodas = new Set();
 
       driversStats?.forEach(d => {
         totalRatingsAllTime += Number(d.total_ratings || 0);
-
-        if (d.total_ratings > 0) {
-          sumOfAverages += Number(d.average_rating);
-          driversWithRatings++;
-        }
 
         if (d.toda_affiliation) {
           uniqueTodas.add(d.toda_affiliation);
@@ -124,6 +122,22 @@ export default function DashboardHome() {
           lowPerforming++;
         }
 
+        // License Validity Analytics
+        if (d.license_validity) {
+          const licDate = new Date(d.license_validity);
+          if (licDate < currentDate) {
+            invalidLicenses++;
+          } else {
+            validLicenses++;
+            if (licDate <= thirtyDaysFromNow) {
+              expiringLicenses++;
+            }
+          }
+        } else {
+          invalidLicenses++;
+        }
+
+        // Permit Validity Analytics
         if (d.valid_until) {
           const validUntil = new Date(d.valid_until);
           if (validUntil < currentDate) {
@@ -160,7 +174,9 @@ export default function DashboardHome() {
         expiringSoon,
         missingPhotos,
         newlyAddedWeek,
-        systemAvgRating: driversWithRatings > 0 ? (sumOfAverages / driversWithRatings) : 0
+        validLicenses,
+        invalidLicenses,
+        expiringLicenses
       })
 
       // Calculate Top Drivers
@@ -271,31 +287,31 @@ export default function DashboardHome() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
-            title="Total Ratings" 
-            value={stats.totalRatingsAllTime} 
-            subtitle="All-time feedback"
-            icon={Star}
-            delay={0}
-          />
-          <StatsCard 
-            title="Average Rating" 
-            value={stats.systemAvgRating > 0 ? stats.systemAvgRating.toFixed(1) : '—'} 
-            subtitle="System-wide average"
-            icon={Activity}
-            delay={50}
-          />
-          <StatsCard 
-            title="Active Registrations" 
-            value={stats.activeRegistered} 
-            subtitle="Currently valid"
-            icon={ShieldCheck}
-            delay={100}
-          />
-          <StatsCard 
-            title="Total Drivers" 
+            title="Total Registered Drivers" 
             value={stats.activeDrivers} 
             subtitle="All registered drivers"
             icon={Users}
+            delay={0}
+          />
+          <StatsCard 
+            title="Valid Driver Licenses" 
+            value={stats.validLicenses} 
+            subtitle="Active & compliant"
+            icon={CheckCircle2}
+            delay={50}
+          />
+          <StatsCard 
+            title="Not Valid Licenses" 
+            value={stats.invalidLicenses} 
+            subtitle="Expired or unverified"
+            icon={XCircle}
+            delay={100}
+          />
+          <StatsCard 
+            title="Active Permits" 
+            value={stats.activeRegistered} 
+            subtitle="Valid tricycle permits"
+            icon={ShieldCheck}
             delay={150}
           />
         </div>
@@ -309,10 +325,10 @@ export default function DashboardHome() {
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard 
-            title="Total Registered Drivers" 
-            value={stats.activeDrivers} 
-            subtitle="All-time registrations"
-            icon={Users}
+            title="Total Ratings" 
+            value={stats.totalRatingsAllTime} 
+            subtitle="All-time feedback"
+            icon={Star}
             delay={100}
           />
           <StatsCard 

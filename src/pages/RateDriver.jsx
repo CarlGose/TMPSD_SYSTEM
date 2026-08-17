@@ -17,6 +17,9 @@ import {
   AlertCircle,
   MessageSquare,
   Send,
+  ShieldAlert,
+  Ban,
+  PhoneCall
 } from 'lucide-react'
 
 export default function RateDriver() {
@@ -98,6 +101,21 @@ export default function RateDriver() {
   const driverFullName = driver
     ? `${driver.first_name} ${driver.middle_name ? driver.middle_name + ' ' : ''}${driver.last_name}`
     : ''
+
+  const now = new Date()
+  const isPermitExpired = driver?.valid_until && new Date(driver.valid_until) < now
+  const isLicenseExpired = driver?.license_validity && new Date(driver.license_validity) < now
+  
+  let isManualHold = Boolean(driver?.is_suspended)
+  try {
+    const raw = localStorage.getItem('manual_suspended_driver_ids')
+    const manualIds = raw ? JSON.parse(raw) : []
+    if (driver?.id && manualIds.includes(driver.id)) {
+      isManualHold = true
+    }
+  } catch (e) {}
+
+  const isSuspended = isManualHold || isPermitExpired || isLicenseExpired
 
   // Loading state
   if (loading) {
@@ -191,15 +209,28 @@ export default function RateDriver() {
         {/* Driver Profile Card */}
         <Card className="glass-card border-border/30 overflow-hidden slide-up">
           <CardContent className="text-center pt-8 pb-6 px-4 sm:px-6">
+            {/* Suspended Alert Banner */}
+            {isSuspended && (
+              <div className="mb-5 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center gap-2 text-rose-400 font-extrabold text-xs uppercase tracking-wider animate-pulse">
+                <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0" />
+                <span>Status: Suspended / Inactive Vehicle</span>
+              </div>
+            )}
+
             {/* Driver Avatar */}
             <div className="mb-4 relative z-10">
               {driver.profile_picture_url ? (
-                <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-muted">
+                <div className="w-28 h-28 mx-auto rounded-2xl border-4 border-background overflow-hidden shadow-lg bg-muted relative">
                   <img 
                     src={driver.profile_picture_url} 
                     alt="Driver 2x2 Photo" 
                     className="w-full h-full object-cover" 
                   />
+                  {isSuspended && (
+                    <div className="absolute inset-0 bg-rose-950/60 backdrop-blur-[2px] flex items-center justify-center text-rose-400">
+                      <Ban className="w-10 h-10" />
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="w-28 h-28 mx-auto rounded-2xl bg-primary/20 border-4 border-background flex items-center justify-center text-primary font-bold text-3xl shadow-lg">
@@ -298,100 +329,131 @@ export default function RateDriver() {
             </div>
 
             <div className="mt-6 pt-2">
-              <Button 
-                onClick={() => {
-                  document.getElementById('rating-form-section')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 rounded-xl transition-all duration-300"
-              >
-                Proceed to Rate This Driver
-              </Button>
+              {isSuspended ? (
+                <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs font-bold flex items-center justify-center gap-2">
+                  <Ban className="w-4 h-4 text-rose-500 shrink-0" />
+                  <span>Ratings & Reviews Locked (Vehicle Suspended)</span>
+                </div>
+              ) : (
+                <Button 
+                  onClick={() => {
+                    document.getElementById('rating-form-section')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 rounded-xl transition-all duration-300"
+                >
+                  Proceed to Rate This Driver
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
 
-        {/* Rating Form */}
-        <Card id="rating-form-section" className="glass-card border-border/30 slide-up" style={{ animationDelay: '150ms' }}>
-          <CardContent className="p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-1">Rate this Driver</h2>
-            <p className="text-sm text-muted-foreground mb-5">
-              How was your experience?
-            </p>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Star Rating */}
-              <div className="flex flex-col items-center gap-2 py-4">
-                <StarRating
-                  rating={rating}
-                  size="xl"
-                  interactive
-                  onRatingChange={setRating}
-                />
-                <p className="text-sm text-muted-foreground mt-1">
-                  {rating === 0 && 'Tap a star to rate'}
-                  {rating === 1 && 'Poor'}
-                  {rating === 2 && 'Fair'}
-                  {rating === 3 && 'Good'}
-                  {rating === 4 && 'Very Good'}
-                  {rating === 5 && 'Excellent'}
+        {/* Rating Form or Suspension Lock Warning */}
+        {isSuspended ? (
+          <Card id="rating-form-section" className="glass-card border-rose-500/40 bg-rose-500/5 slide-up" style={{ animationDelay: '150ms' }}>
+            <CardContent className="p-6 text-center space-y-4">
+              <div className="w-16 h-16 rounded-2xl bg-rose-500/20 text-rose-500 flex items-center justify-center mx-auto border border-rose-500/30 shadow-inner">
+                <ShieldAlert className="h-8 w-8" />
+              </div>
+              <div>
+                <h2 className="text-xl font-extrabold text-rose-400">Rating Submissions Disabled</h2>
+                <p className="text-sm text-foreground/80 mt-2 leading-relaxed font-medium">
+                  This tricycle driver's franchise permit or driver's license has expired or is currently under administrative suspension. Commuter feedback submissions are locked until compliance renewal at the TMPSD Office.
                 </p>
               </div>
-
-              {/* Passenger Name */}
-              <div className="space-y-2">
-                <Label htmlFor="passengerName" className="text-sm">
-                  Your Name (Optional)
-                </Label>
-                <Input
-                  id="passengerName"
-                  placeholder="Enter your name"
-                  value={passengerName}
-                  onChange={(e) => setPassengerName(e.target.value)}
-                  className="bg-input/50 border-border/50"
-                />
+              <div className="p-4 rounded-2xl bg-background/80 border border-border/40 text-left text-xs space-y-2 backdrop-blur-md">
+                <p className="font-bold text-foreground flex items-center gap-1.5 text-sm">
+                  <PhoneCall className="w-4 h-4 text-rose-500" />
+                  TMPSD Public Safety & Enforcement:
+                </p>
+                <p className="text-muted-foreground font-mono font-semibold">Hotline: (044) 940-0029 • Palayan City Hall</p>
+                <p className="text-[11px] text-muted-foreground/80">If you are currently experiencing an emergency or safety concern, please contact local authorities immediately.</p>
               </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card id="rating-form-section" className="glass-card border-border/30 slide-up" style={{ animationDelay: '150ms' }}>
+            <CardContent className="p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-1">Rate this Driver</h2>
+              <p className="text-sm text-muted-foreground mb-5">
+                How was your experience?
+              </p>
 
-              {/* Review */}
-              <div className="space-y-2">
-                <Label htmlFor="review" className="text-sm">
-                  Review (Optional)
-                </Label>
-                <Textarea
-                  id="review"
-                  placeholder="Share your experience..."
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  rows={3}
-                  className="bg-input/50 border-border/50 resize-none"
-                />
-              </div>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Star Rating */}
+                <div className="flex flex-col items-center gap-2 py-4">
+                  <StarRating
+                    rating={rating}
+                    size="xl"
+                    interactive
+                    onRatingChange={setRating}
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {rating === 0 && 'Tap a star to rate'}
+                    {rating === 1 && 'Poor'}
+                    {rating === 2 && 'Fair'}
+                    {rating === 3 && 'Good'}
+                    {rating === 4 && 'Very Good'}
+                    {rating === 5 && 'Excellent'}
+                  </p>
+                </div>
 
-              {/* Submit */}
-              <Button
-                type="submit"
-                disabled={rating === 0 || submitting}
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:grayscale transition-all duration-300"
-              >
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 spinner" />
-                    Submitting...
-                  </>
-                ) : rating === 0 ? (
-                  <>
-                    <Star className="h-4 w-4 mr-2" />
-                    Select a Rating First
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-4 w-4 mr-2" />
-                    Submit Rating
-                  </>
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                {/* Passenger Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="passengerName" className="text-sm">
+                    Your Name (Optional)
+                  </Label>
+                  <Input
+                    id="passengerName"
+                    placeholder="Enter your name"
+                    value={passengerName}
+                    onChange={(e) => setPassengerName(e.target.value)}
+                    className="bg-input/50 border-border/50"
+                  />
+                </div>
+
+                {/* Review */}
+                <div className="space-y-2">
+                  <Label htmlFor="review" className="text-sm">
+                    Review (Optional)
+                  </Label>
+                  <Textarea
+                    id="review"
+                    placeholder="Share your experience..."
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                    rows={3}
+                    className="bg-input/50 border-border/50 resize-none"
+                  />
+                </div>
+
+                {/* Submit */}
+                <Button
+                  type="submit"
+                  disabled={rating === 0 || submitting}
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:grayscale transition-all duration-300"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 spinner" />
+                      Submitting...
+                    </>
+                  ) : rating === 0 ? (
+                    <>
+                      <Star className="h-4 w-4 mr-2" />
+                      Select a Rating First
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Submit Rating
+                    </>
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Recent Reviews */}
         {ratings.filter(r => r.review).length > 0 && (

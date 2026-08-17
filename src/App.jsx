@@ -11,6 +11,7 @@ import AddDriver from '@/pages/AddDriver'
 import DriverDetail from '@/pages/DriverDetail'
 import EditDriver from '@/pages/EditDriver'
 import RateDriver from '@/pages/RateDriver'
+import SuspendedDrivers from '@/pages/SuspendedDrivers'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -80,6 +81,17 @@ function AppRoutes() {
           <ProtectedRoute>
             <DashboardLayout>
               <EditDriver />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/dashboard/suspended"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <SuspendedDrivers />
             </DashboardLayout>
           </ProtectedRoute>
         }

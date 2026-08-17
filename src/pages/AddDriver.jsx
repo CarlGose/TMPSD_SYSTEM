@@ -687,38 +687,40 @@ export default function AddDriver() {
 
       {/* Summary Modal */}
       <Dialog open={showSummary} onOpenChange={setShowSummary}>
-        <DialogContent className="max-w-3xl max-h-[90vh] flex flex-col p-0 overflow-hidden glass-card border-border/40">
-          <div className="px-6 pt-6 pb-3 border-b border-border/20 bg-muted/10">
+        <DialogContent className="!max-w-3xl w-[95vw] max-h-[90vh] flex flex-col p-0 overflow-hidden glass-card border-border/40">
+          {/* Sticky Header */}
+          <div className="px-5 sm:px-6 pt-5 pb-3 border-b border-border/20 bg-muted/10 shrink-0">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
+              <DialogTitle className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
                 Review Registration Details
               </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">
+              <DialogDescription className="text-xs sm:text-sm text-muted-foreground">
                 Please double check all information before submitting to the database.
               </DialogDescription>
             </DialogHeader>
           </div>
           
-          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+          {/* Scrollable Content */}
+          <div className="flex-1 overflow-y-auto px-5 sm:px-6 py-5 space-y-5">
             {/* Section 1: Operator & Driver Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Operator Box */}
               <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
                 <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
-                  <User className="h-4 w-4 text-primary" />
+                  <User className="h-4 w-4 text-primary shrink-0" />
                   Operator Details
                 </h4>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5">
                   <div>
                     <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Full Name</span>
-                    <span className="font-semibold text-foreground text-sm">
+                    <span className="font-semibold text-foreground text-sm break-words">
                       {[form.operator_first_name, form.operator_middle_name, form.operator_last_name].filter(Boolean).join(' ') || 'N/A'}
                     </span>
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Address</span>
-                    <span className="font-medium text-foreground">{form.operator_address || 'N/A'}</span>
+                    <span className="font-medium text-foreground text-xs break-words">{form.operator_address || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -726,31 +728,31 @@ export default function AddDriver() {
               {/* Driver Box */}
               <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
                 <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-primary" />
-                  Authorized Driver Details
+                  <Shield className="h-4 w-4 text-primary shrink-0" />
+                  Authorized Driver
                 </h4>
-                <div className="space-y-2 text-xs">
+                <div className="space-y-2.5">
                   <div>
                     <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Full Name</span>
-                    <span className="font-semibold text-foreground text-sm">
+                    <span className="font-semibold text-foreground text-sm break-words">
                       {[form.first_name, form.middle_name, form.last_name].filter(Boolean).join(' ') || 'N/A'}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">License No.</span>
-                      <span className="font-medium text-foreground">{form.license || 'N/A'}</span>
+                      <span className="font-medium text-foreground text-xs break-all">{form.license || 'N/A'}</span>
                     </div>
                     <div>
                       <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Valid Until</span>
-                      <span className="font-medium text-foreground">
+                      <span className="font-medium text-foreground text-xs">
                         {form.license_validity ? new Date(form.license_validity).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
                       </span>
                     </div>
                   </div>
                   <div>
                     <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">TODA Affiliation</span>
-                    <span className="font-medium text-foreground">{form.toda_affiliation || 'N/A'}</span>
+                    <span className="font-medium text-foreground text-xs break-words">{form.toda_affiliation || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -759,10 +761,10 @@ export default function AddDriver() {
             {/* Section 2: Tricycle Details */}
             <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
               <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
-                <FileText className="h-4 w-4 text-primary" />
+                <FileText className="h-4 w-4 text-primary shrink-0" />
                 Tricycle & Permit Information
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-xs">
                 <div>
                   <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Plate Number</span>
                   <span className="font-bold text-primary text-sm">{form.plate_number || 'N/A'}</span>
@@ -779,19 +781,29 @@ export default function AddDriver() {
                   <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Permit Number</span>
                   <span className="font-medium text-foreground">{form.permit_no || 'N/A'}</span>
                 </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">Permit Valid Until</span>
+                  <span className="font-medium text-foreground">
+                    {form.valid_until ? new Date(form.valid_until).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground block text-[10px] uppercase font-semibold tracking-wider">OR No.</span>
+                  <span className="font-medium text-foreground">{form.or_no || 'N/A'}</span>
+                </div>
               </div>
             </div>
 
             {/* Section 3: Uploaded Documents Grid */}
             <div className="p-4 rounded-xl bg-card/60 border border-border/40 space-y-3">
               <h4 className="font-semibold text-sm text-foreground border-b border-border/30 pb-2 flex items-center gap-2">
-                <ImageIcon className="h-4 w-4 text-primary" />
+                <ImageIcon className="h-4 w-4 text-primary shrink-0" />
                 Uploaded Documents
               </h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5 text-center">
                   <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Profile Picture</p>
-                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                  <div className="h-28 sm:h-32 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
                     {profilePreview ? (
                       <img src={profilePreview} alt="Profile" className="w-full h-full object-contain rounded-md" />
                     ) : (
@@ -802,7 +814,7 @@ export default function AddDriver() {
 
                 <div className="space-y-1.5 text-center">
                   <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Driver's License</p>
-                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                  <div className="h-28 sm:h-32 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
                     {licensePreview ? (
                       <img src={licensePreview} alt="License" className="w-full h-full object-contain rounded-md" />
                     ) : (
@@ -813,7 +825,7 @@ export default function AddDriver() {
 
                 <div className="space-y-1.5 text-center">
                   <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">OR / CR Document</p>
-                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                  <div className="h-28 sm:h-32 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
                     {orCrPreview ? (
                       <img src={orCrPreview} alt="OR/CR" className="w-full h-full object-contain rounded-md" />
                     ) : (
@@ -824,7 +836,7 @@ export default function AddDriver() {
 
                 <div className="space-y-1.5 text-center">
                   <p className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wider">Tricycle Photo</p>
-                  <div className="h-24 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
+                  <div className="h-28 sm:h-32 rounded-lg overflow-hidden border border-border/40 bg-muted/20 flex items-center justify-center p-1">
                     {tricyclePreview ? (
                       <img src={tricyclePreview} alt="Tricycle" className="w-full h-full object-contain rounded-md" />
                     ) : (
@@ -836,11 +848,12 @@ export default function AddDriver() {
             </div>
           </div>
 
-          <DialogFooter className="m-0 sm:m-0 px-6 py-4 bg-card/90 backdrop-blur-md border-t border-border/50 flex flex-row items-center justify-end gap-3 w-full">
-            <Button variant="outline" size="lg" className="flex-1 sm:flex-none font-bold" onClick={() => setShowSummary(false)} disabled={loading}>
+          {/* Sticky Footer */}
+          <DialogFooter className="!m-0 !-mx-0 !-mb-0 px-5 sm:px-6 py-5 bg-card backdrop-blur-md border-t-2 border-primary/30 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4 w-full shrink-0">
+            <Button variant="outline" size="lg" className="w-full sm:w-auto font-bold border-2 border-foreground/40 bg-muted/30 text-foreground hover:bg-muted/60 hover:border-foreground/60" onClick={() => setShowSummary(false)} disabled={loading}>
               Edit Details
             </Button>
-            <Button size="lg" className="flex-1 sm:flex-none font-bold bg-primary text-primary-foreground" onClick={handleSubmit} disabled={loading}>
+            <Button size="lg" className="w-full sm:w-auto font-bold bg-primary text-primary-foreground" onClick={handleSubmit} disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 spinner" />

@@ -381,13 +381,18 @@ export default function EditDriver() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>License Valid Until</Label>
+                  <Label className="flex items-center gap-1.5">
+                    License Valid Until
+                    <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground border border-border/40">Locked</span>
+                  </Label>
                   <Input
                     type="date"
+                    readOnly
+                    disabled
                     value={form.license_validity}
-                    onChange={(e) => handleChange('license_validity', e.target.value)}
-                    className="bg-input/50 border-border/50"
+                    className="bg-muted/40 border-border/40 text-muted-foreground font-mono font-semibold cursor-not-allowed select-none"
                   />
+                  <p className="text-[11px] text-muted-foreground/70">Validity date is managed via official renewal actions.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>TODA Affiliation</Label>
@@ -415,13 +420,18 @@ export default function EditDriver() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Date Valid Until</Label>
+                  <Label className="flex items-center gap-1.5">
+                    Permit Valid Until
+                    <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground border border-border/40">Locked</span>
+                  </Label>
                   <Input
                     type="date"
+                    readOnly
+                    disabled
                     value={form.valid_until}
-                    onChange={(e) => handleChange('valid_until', e.target.value)}
-                    className="bg-input/50 border-border/50"
+                    className="bg-muted/40 border-border/40 text-muted-foreground font-mono font-semibold cursor-not-allowed select-none"
                   />
+                  <p className="text-[11px] text-muted-foreground/70">Permit validity date is managed via official permit renewal.</p>
                 </div>
                 <div className="space-y-2">
                   <Label>OR No.</Label>
