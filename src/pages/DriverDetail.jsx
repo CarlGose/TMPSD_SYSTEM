@@ -280,10 +280,10 @@ export default function DriverDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
                 <InfoItem icon={FileText} label="Address" value={driver.address || 'N/A'} />
                 <InfoItem icon={FileText} label="TODA Affiliation" value={driver.toda_affiliation || 'N/A'} />
-                <InfoItem icon={Shield} label="License" value={driver.license} />
+                <InfoItem icon={Shield} label="Driver's License No." value={driver.license} />
                 <InfoItem 
                   icon={Calendar} 
-                  label="License Valid Until" 
+                  label="Driver's License Validity Until" 
                   value={
                     <span className="flex items-center gap-2 flex-wrap">
                       {driver.license_validity ? new Date(driver.license_validity).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}

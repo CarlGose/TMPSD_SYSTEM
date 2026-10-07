@@ -389,7 +389,7 @@ export default function DriverList() {
                               {driver.license_validity && (
                                 <p className="text-xs mt-1 text-foreground/70 flex items-center gap-1.5 font-medium">
                                   <Clock className="w-4 h-4 text-primary/70" />
-                                  License valid until: <span className="text-foreground/90 font-bold">{new Date(driver.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                                  Driver's license validity until: <span className="text-foreground/90 font-bold">{new Date(driver.license_validity).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                 </p>
                               )}
                             </div>

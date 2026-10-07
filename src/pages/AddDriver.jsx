@@ -510,7 +510,7 @@ export default function AddDriver() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>License Valid Until</Label>
+                    <Label>Driver's License Validity Until *</Label>
                     <Input
                       type="date"
                       value={form.license_validity}

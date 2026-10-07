@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Loader2, Eye, EyeOff, Lock, Mail } from 'lucide-react'
+import { ShaderGradientCanvas, ShaderGradient } from '@shadergradient/react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -39,11 +40,60 @@ export default function LoginPage() {
     <div className="login-page">
       {/* Animated background */}
       <div className="login-bg">
+        <ShaderGradientCanvas
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+          }}
+        >
+          <ShaderGradient
+            animate="on"
+            axesHelper="off"
+            brightness={1.1}
+            cAzimuthAngle={180}
+            cDistance={3.9}
+            cPolarAngle={115}
+            cameraZoom={1}
+            color1="#468432"
+            color2="#FFA02E"
+            color3="#111F0D"
+            destination="onCanvas"
+            embedMode="off"
+            envPreset="city"
+            format="gif"
+            fov={45}
+            frameRate={10}
+            gizmoHelper="hide"
+            grain="off"
+            lightType="3d"
+            pixelDensity={1}
+            positionX={-0.5}
+            positionY={0.1}
+            positionZ={0}
+            range="disabled"
+            rangeEnd={40}
+            rangeStart={0}
+            reflection={0.1}
+            rotationX={0}
+            rotationY={0}
+            rotationZ={235}
+            shader="defaults"
+            type="waterPlane"
+            uAmplitude={0}
+            uDensity={1.1}
+            uFrequency={5.5}
+            uSpeed={0.1}
+            uStrength={2.4}
+            uTime={0.2}
+            wireframe={false}
+          />
+        </ShaderGradientCanvas>
         <div className="login-orb login-orb-1" />
         <div className="login-orb login-orb-2" />
-        <div className="login-orb login-orb-3" />
-        <div className="login-orb login-orb-4" />
-        <div className="login-grid-overlay" />
       </div>
 
       <div className="login-container">

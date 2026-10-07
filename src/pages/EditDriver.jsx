@@ -382,7 +382,7 @@ export default function EditDriver() {
                 </div>
                 <div className="space-y-2">
                   <Label className="flex items-center gap-1.5">
-                    License Valid Until
+                    Driver's License Validity Until
                     <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground border border-border/40">Locked</span>
                   </Label>
                   <Input
