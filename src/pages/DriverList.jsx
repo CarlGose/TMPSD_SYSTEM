@@ -14,6 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  Dialog,
+  DialogContent,
+} from '@/components/ui/dialog'
 import { 
   Search, 
   UserPlus, 
@@ -52,21 +56,21 @@ const getDriverStatus = (driver) => {
   }
 
   if (isLicenseExpired && isPermitExpired) {
-    return { label: 'License & Permit Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+    return { label: 'License & Permit Expired', Icon: XCircle, colorClass: 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/50 shadow-sm' }
   }
   if (isLicenseExpired) {
-    return { label: 'License Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+    return { label: 'License Expired', Icon: XCircle, colorClass: 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/50 shadow-sm' }
   }
   if (isPermitExpired) {
-    return { label: 'Permit Expired', Icon: XCircle, colorClass: 'bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-[0_0_15px_rgba(244,63,94,0.3)]' }
+    return { label: 'Permit Expired', Icon: XCircle, colorClass: 'bg-rose-100 text-rose-800 border-rose-300 dark:bg-rose-500/20 dark:text-rose-300 dark:border-rose-500/50 shadow-sm' }
   }
   if (isLicenseExpiring || isPermitExpiring) {
-    return { label: 'Expiring Soon', Icon: AlertCircle, colorClass: 'bg-amber-500/20 text-amber-300 border-amber-500/50 shadow-[0_0_15px_rgba(245,158,11,0.3)]' }
+    return { label: 'Expiring Soon', Icon: AlertCircle, colorClass: 'bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/50 shadow-sm' }
   }
   if (!driver.valid_until && !driver.license_validity) {
-    return { label: 'Incomplete', Icon: Clock, colorClass: 'bg-zinc-500/10 text-zinc-500 border-zinc-500/30' }
+    return { label: 'Incomplete', Icon: Clock, colorClass: 'bg-zinc-100 text-zinc-700 border-zinc-300 dark:bg-zinc-500/10 dark:text-zinc-500 dark:border-zinc-500/30' }
   }
-  return { label: 'Active', Icon: CheckCircle2, colorClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50 shadow-[0_0_15px_rgba(16,185,129,0.3)]' }
+  return { label: 'Active', Icon: CheckCircle2, colorClass: 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/50 shadow-sm' }
 }
 
 export default function DriverList() {
@@ -75,6 +79,7 @@ export default function DriverList() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const [expandedTodas, setExpandedTodas] = useState({})
+  const [previewImage, setPreviewImage] = useState(null)
 
   const toggleToda = (toda) => {
     setExpandedTodas(prev => ({
@@ -343,7 +348,12 @@ export default function DriverList() {
                                 <img
                                   src={driver.profile_picture_url}
                                   alt={`${driver.first_name} ${driver.last_name}`}
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)] cursor-pointer"
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                    setPreviewImage(driver.profile_picture_url)
+                                  }}
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center text-primary font-bold text-3xl tracking-tighter">
@@ -434,6 +444,19 @@ export default function DriverList() {
           </div>
         )}
       </div>
+
+      {/* Image Preview Modal */}
+      <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
+        <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex items-center justify-center">
+          {previewImage && (
+            <img 
+              src={previewImage} 
+              alt="Preview" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

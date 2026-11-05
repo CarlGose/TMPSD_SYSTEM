@@ -121,6 +121,7 @@ export default function SuspendedDrivers() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [selectedDriver, setSelectedDriver] = useState(null)
+  const [previewDriver, setPreviewDriver] = useState(null)
   const [renewDialogOpen, setRenewDialogOpen] = useState(false)
   const [renewType, setRenewType] = useState('permit') // 'permit' | 'license'
   const [newDate, setNewDate] = useState('')
@@ -366,24 +367,46 @@ export default function SuspendedDrivers() {
                     className="flex flex-col lg:flex-row items-start lg:items-center justify-between p-5 rounded-2xl bg-gradient-to-r from-rose-500/10 via-rose-500/5 to-transparent border border-rose-500/30 hover:border-rose-500/50 transition-all duration-300 gap-5 shadow-sm hover:shadow-md"
                   >
                     {/* Left: Driver profile */}
-                    <div className="flex items-center gap-4 flex-1 min-w-0">
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden bg-background shrink-0 border-2 border-rose-500/40 flex items-center justify-center text-rose-400 font-extrabold text-xl shadow-md relative">
+                    <div className="flex items-center gap-4 sm:gap-5 flex-1 min-w-0">
+                      {/* Driver Photo with visible SUSPENDED badge & click to preview */}
+                      <div 
+                        onClick={() => driver.profile_picture_url && setPreviewDriver(driver)}
+                        className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-background shrink-0 border-2 border-rose-500/70 flex items-center justify-center text-rose-500 font-extrabold text-xl shadow-md relative group/photo ${
+                          driver.profile_picture_url ? 'cursor-pointer hover:border-rose-500 hover:shadow-lg transition-all duration-300' : ''
+                        }`}
+                        title={driver.profile_picture_url ? "Click to view full photo" : undefined}
+                      >
                         {driver.profile_picture_url ? (
-                          <img src={driver.profile_picture_url} alt={driver.first_name} className="w-full h-full object-cover" />
+                          <>
+                            <img 
+                              src={driver.profile_picture_url} 
+                              alt={driver.first_name} 
+                              className="w-full h-full object-cover group-hover/photo:scale-105 transition-transform duration-300" 
+                            />
+                            {/* Hover overlay hint */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/photo:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 z-10">
+                              <Eye className="w-5 h-5 text-white drop-shadow" />
+                              <span className="text-[9px] font-extrabold uppercase tracking-wider text-white drop-shadow">View Photo</span>
+                            </div>
+                          </>
                         ) : (
-                          <span>{driver.first_name[0]}{driver.last_name[0]}</span>
+                          <span className="text-2xl font-black">{driver.first_name[0]}{driver.last_name[0]}</span>
                         )}
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-rose-500 text-white flex items-center justify-center shadow-md">
-                          <Ban className="w-3.5 h-3.5" />
+
+                        {/* Visible SUSPENDED banner across bottom of image */}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-rose-950 via-rose-900/95 to-rose-800/80 py-1 px-1 flex items-center justify-center gap-1 text-white text-[9px] font-black uppercase tracking-wider shadow z-20">
+                          <Ban className="w-3 h-3 text-rose-300 shrink-0" />
+                          <span>SUSPENDED</span>
                         </div>
                       </div>
 
-                      <div className="min-w-0 space-y-1">
+                      <div className="min-w-0 space-y-1.5 flex-1">
                         <div className="flex items-center gap-2.5 flex-wrap">
                           <h4 className="font-extrabold text-foreground text-base sm:text-lg truncate">
                             {driver.first_name} {driver.middle_name ? driver.middle_name + ' ' : ''}{driver.last_name}
                           </h4>
-                          <Badge variant="destructive" className="bg-rose-500/20 text-rose-300 border-rose-500/40 text-[10px] uppercase font-black tracking-widest px-2.5 py-0.5">
+                          <Badge className="bg-rose-600 text-white border border-rose-700 text-[11px] uppercase font-black tracking-wider px-3 py-1 shadow-md hover:bg-rose-700">
+                            <Ban className="w-3.5 h-3.5 mr-1 inline" />
                             SUSPENDED / INACTIVE
                           </Badge>
                         </div>
@@ -396,20 +419,20 @@ export default function SuspendedDrivers() {
                           <span>TODA: <strong className="text-primary font-bold">{driver.toda_affiliation || 'N/A'}</strong></span>
                         </div>
 
-                        {/* Specific Badges per Reason */}
+                        {/* Specific Badges per Reason with high contrast */}
                         <div className="flex flex-wrap items-center gap-2 pt-1">
                           {driver.suspensionInfo.reasons.map((reason, idx) => {
                             let icon = AlertTriangle
-                            let badgeStyle = "bg-rose-500/15 text-rose-300 border-rose-500/30"
+                            let badgeStyle = "bg-rose-100 text-rose-900 border-rose-300 dark:bg-rose-500/20 dark:text-rose-200 dark:border-rose-500/40"
                             if (reason.type === 'permit') {
                               icon = FileX
-                              badgeStyle = "bg-amber-500/15 text-amber-300 border-amber-500/30"
+                              badgeStyle = "bg-amber-100 text-amber-900 border-amber-300 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/40"
                             } else if (reason.type === 'license') {
                               icon = IdCard
-                              badgeStyle = "bg-purple-500/15 text-purple-300 border-purple-500/30"
+                              badgeStyle = "bg-purple-100 text-purple-900 border-purple-300 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/40"
                             } else if (reason.type === 'manual') {
                               icon = Ban
-                              badgeStyle = "bg-rose-500/20 text-rose-200 border-rose-500/40"
+                              badgeStyle = "bg-rose-100 text-rose-900 border-rose-300 dark:bg-rose-500/20 dark:text-rose-200 dark:border-rose-500/40"
                             }
 
                             const IconComponent = icon
@@ -430,10 +453,10 @@ export default function SuspendedDrivers() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="gap-2 text-xs font-extrabold border-amber-500/50 text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 transition-all shadow-sm"
+                        className="gap-2 text-xs font-extrabold border-amber-300 text-amber-900 bg-amber-100 hover:bg-amber-200 dark:border-amber-500/50 dark:text-amber-300 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 transition-all shadow-sm"
                         onClick={() => handleOpenRenew(driver, 'permit')}
                       >
-                        <FileCheck className="w-4 h-4 text-amber-400" />
+                        <FileCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                         Renew Permit
                       </Button>
 
@@ -441,10 +464,10 @@ export default function SuspendedDrivers() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="gap-2 text-xs font-extrabold border-purple-500/50 text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 transition-all shadow-sm"
+                        className="gap-2 text-xs font-extrabold border-purple-300 text-purple-900 bg-purple-100 hover:bg-purple-200 dark:border-purple-500/50 dark:text-purple-300 dark:bg-purple-500/10 dark:hover:bg-purple-500/20 transition-all shadow-sm"
                         onClick={() => handleOpenRenew(driver, 'license')}
                       >
-                        <IdCard className="w-4 h-4 text-purple-400" />
+                        <IdCard className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                         Update License
                       </Button>
 
@@ -455,19 +478,19 @@ export default function SuspendedDrivers() {
                         title={isManualHold ? 'Clear Administrative Hold' : 'Apply Administrative Hold'}
                         className={`gap-1.5 text-xs font-bold transition-all ${
                           isManualHold 
-                            ? 'border-emerald-500/50 text-emerald-300 bg-emerald-500/10 hover:bg-emerald-500/20' 
-                            : 'border-rose-500/40 text-rose-300 bg-rose-500/10 hover:bg-rose-500/20'
+                            ? 'border-emerald-300 text-emerald-900 bg-emerald-100 hover:bg-emerald-200 dark:border-emerald-500/50 dark:text-emerald-300 dark:bg-emerald-500/10' 
+                            : 'border-rose-300 text-rose-900 bg-rose-100 hover:bg-rose-200 dark:border-rose-500/40 dark:text-rose-300 dark:bg-rose-500/10'
                         }`}
                         onClick={() => handleToggleManualSuspension(driver)}
                       >
                         {isManualHold ? (
                           <>
-                            <Unlock className="w-4 h-4 text-emerald-400" />
+                            <Unlock className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                             Clear Hold
                           </>
                         ) : (
                           <>
-                            <Lock className="w-4 h-4 text-rose-400" />
+                            <Lock className="w-4 h-4 text-rose-600 dark:text-rose-400" />
                             Manual Hold
                           </>
                         )}
@@ -526,6 +549,62 @@ export default function SuspendedDrivers() {
             </Button>
             <Button onClick={handleSaveRenewal} disabled={updating} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-10 px-6">
               {updating ? 'Updating Date...' : 'Save & Confirm Renewal'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Photo Preview Lightbox Dialog */}
+      <Dialog open={Boolean(previewDriver)} onOpenChange={(open) => !open && setPreviewDriver(null)}>
+        <DialogContent className="sm:max-w-xl glass-card border-border/50 p-6">
+          <DialogHeader>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                  <span>{previewDriver?.first_name} {previewDriver?.middle_name ? previewDriver.middle_name + ' ' : ''}{previewDriver?.last_name}</span>
+                </DialogTitle>
+                <DialogDescription className="text-xs font-medium text-muted-foreground pt-1">
+                  {previewDriver?.toda_affiliation || 'Unassigned TODA'} • Plate: {previewDriver?.plate_number || 'N/A'} • Body: {previewDriver?.body_no || previewDriver?.body_number || 'N/A'}
+                </DialogDescription>
+              </div>
+              <Badge className="bg-rose-600 text-white font-black text-xs uppercase px-3 py-1 shrink-0 shadow">
+                SUSPENDED
+              </Badge>
+            </div>
+          </DialogHeader>
+
+          <div className="py-4 flex flex-col items-center justify-center">
+            <div className="w-full max-h-[60vh] rounded-2xl overflow-hidden bg-black/5 dark:bg-black/40 border-2 border-rose-500/40 flex items-center justify-center p-3 shadow-2xl relative">
+              {previewDriver?.profile_picture_url ? (
+                <img 
+                  src={previewDriver.profile_picture_url} 
+                  alt={previewDriver.first_name} 
+                  className="max-h-[52vh] w-auto max-w-full object-contain rounded-xl shadow-lg" 
+                />
+              ) : (
+                <div className="w-48 h-48 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center text-5xl font-black">
+                  {previewDriver?.first_name?.[0]}{previewDriver?.last_name?.[0]}
+                </div>
+              )}
+            </div>
+
+            <div className="w-full mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-center gap-3 text-rose-800 dark:text-rose-200">
+              <Ban className="w-5 h-5 shrink-0 text-rose-600 dark:text-rose-400" />
+              <div className="text-xs font-semibold">
+                This driver is currently flagged as <strong>Suspended / Inactive</strong> in the enforcement queue.
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:justify-between">
+            <Link to={`/dashboard/drivers/${previewDriver?.id}`}>
+              <Button variant="outline" className="font-bold gap-2">
+                <Eye className="w-4 h-4" />
+                Go to Driver Details
+              </Button>
+            </Link>
+            <Button onClick={() => setPreviewDriver(null)} className="font-bold">
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

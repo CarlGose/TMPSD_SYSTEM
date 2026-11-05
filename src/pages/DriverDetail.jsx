@@ -47,6 +47,7 @@ export default function DriverDetail() {
   const [renewDialogOpen, setRenewDialogOpen] = useState(false)
   const [updatingPermit, setUpdatingPermit] = useState(false)
   const [newValidUntil, setNewValidUntil] = useState('')
+  const [previewImage, setPreviewImage] = useState(null)
 
   useEffect(() => {
     fetchDriver()
@@ -351,7 +352,12 @@ export default function DriverDetail() {
                         Profile Picture
                       </p>
                       <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
-                        <img src={driver.profile_picture_url} alt="Profile" className="w-full h-full object-contain rounded-lg" />
+                        <img 
+                          src={driver.profile_picture_url} 
+                          alt="Profile" 
+                          className="w-full h-full object-contain rounded-lg cursor-pointer hover:scale-105 transition-transform" 
+                          onClick={() => setPreviewImage(driver.profile_picture_url)}
+                        />
                       </div>
                     </div>
                   )}
@@ -363,7 +369,12 @@ export default function DriverDetail() {
                         Driver's License
                       </p>
                       <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
-                        <img src={driver.license_photo_url} alt="License" className="w-full h-full object-contain rounded-lg" />
+                        <img 
+                          src={driver.license_photo_url} 
+                          alt="License" 
+                          className="w-full h-full object-contain rounded-lg cursor-pointer hover:scale-105 transition-transform" 
+                          onClick={() => setPreviewImage(driver.license_photo_url)}
+                        />
                       </div>
                     </div>
                   )}
@@ -375,7 +386,12 @@ export default function DriverDetail() {
                         Tricycle Photo
                       </p>
                       <div className="rounded-xl overflow-hidden border border-border/30 h-48 bg-muted/10 flex items-center justify-center p-2">
-                        <img src={driver.tricycle_photo_url} alt="Tricycle" className="w-full h-full object-contain rounded-lg" />
+                        <img 
+                          src={driver.tricycle_photo_url} 
+                          alt="Tricycle" 
+                          className="w-full h-full object-contain rounded-lg cursor-pointer hover:scale-105 transition-transform" 
+                          onClick={() => setPreviewImage(driver.tricycle_photo_url)}
+                        />
                       </div>
                     </div>
                   )}
@@ -390,7 +406,12 @@ export default function DriverDetail() {
                         {driver.or_cr_url.endsWith('.pdf') ? (
                           <a href={driver.or_cr_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">View PDF Document</a>
                         ) : (
-                          <img src={driver.or_cr_url} alt="OR/CR" className="w-full h-full object-contain rounded-lg" />
+                          <img 
+                            src={driver.or_cr_url} 
+                            alt="OR/CR" 
+                            className="w-full h-full object-contain rounded-lg cursor-pointer hover:scale-105 transition-transform" 
+                            onClick={() => setPreviewImage(driver.or_cr_url)}
+                          />
                         )}
                       </div>
                     </div>
@@ -506,6 +527,19 @@ export default function DriverDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Image Preview Modal */}
+      <Dialog open={!!previewImage} onOpenChange={(open) => !open && setPreviewImage(null)}>
+        <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex items-center justify-center">
+          {previewImage && (
+            <img 
+              src={previewImage} 
+              alt="Preview" 
+              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
